@@ -21,7 +21,6 @@ namespace UNO
             player_name = current_player_name;
             player_cards = new List<Card>();
             player_points = int.MaxValue;
-            Console.WriteLine(player_points);
         }
     }
 
@@ -137,11 +136,9 @@ namespace UNO
                 }
             } while (title.Length != Title_index);
 
-
-
-
-
             int[] index_playable_card = new int[120];// indexs des cartes jouables des joueurs
+            int Start_line = 0;
+            int End_line = 0;
 
             byte players_numbers = 0;// nombre de joueurs
             byte current_player = 0;// valeur du joueur actuelle 
@@ -158,6 +155,7 @@ namespace UNO
             List<Card> deck_card = new List<Card>();// liste des cartes non jouées
             List<Card> deck_card_used = new List<Card>();// cartes jouées
 
+            
             Get_players_numbers(ref players_numbers);
             Get_players_names(ref players_numbers, ref players_names);
             Get_player_type(players_numbers, ref players_types);
@@ -174,11 +172,20 @@ namespace UNO
             {
                 Random_color(ref current_color);
             }
-            play_round(players_numbers, Current_direction, ref current_player, ref Players, deck_card_used, ref index_playable_card, ref current_color, ref deck_card);
+            // Effacer la derniere carte jouée
+            Start_line = 20;
+            End_line = Console.CursorTop; ;
+            for (int i = 0; i < End_line - Start_line; i++)
+            {
+                Console.SetCursorPosition(Console.CursorLeft, End_line - i);
+                Console.Write(new string(' ', Console.WindowWidth));
+                Console.SetCursorPosition(Console.CursorLeft, Start_line);
+            }
+            play_round(players_numbers, Current_direction, ref current_player, ref Players, deck_card_used, ref index_playable_card, ref current_color, ref deck_card, ref Start_line, ref End_line);
 
             Console.Read();
 
-
+            
         }
 
         // chargement des cartes
@@ -333,8 +340,9 @@ namespace UNO
         }
 
 
-        static void play_round(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck)
+        static void play_round(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck,ref int Start_line, ref int End_line)
         {
+            Start_line = Console.CursorTop;
             Console.WriteLine($"\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r {Players[current_player].player_name}, c'est à vous de jouez ! \n\r\n\r");
             Show_last_card_played(card_deck_used.Last(), current_color);
             show_number_of_cards_of_each_player(Players, players_numbers);
@@ -348,18 +356,30 @@ namespace UNO
             Choose_card(current_player, ref Players, card_deck_used, index_playable_card, ref card_deck, players_numbers, current_color, direction);
             Play_card(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck);
 
-            end_round(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck);
+
+            End_line = Console.CursorTop;
+            end_round(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Start_line, ref End_line);
 
 
         }
 
-        static void end_round(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck)
+        static void end_round(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck, ref int Start_line, ref int End_line)
         {
+
+            // Effacer la derniere carte jouée
+            for (int i = 0; i < End_line - Start_line; i++)
+            {
+                Console.SetCursorPosition(Console.CursorLeft, End_line - i);
+                Console.Write(new string(' ', Console.WindowWidth));
+                Console.SetCursorPosition(Console.CursorLeft, Start_line);
+            }
+
+            //Console.ReadLine();
             for (int i = 0; i < players_numbers; i++)
             {
                 if (Players[i].player_cards.Count() == 0)
                 {
-                    Console.WriteLine($"{Players[i].player_name} à gagné");
+                    Console.WriteLine($"\n\r\n\r\n\r{Players[i].player_name} à gagné");
                     Get_players_points(Players, players_numbers);
                     Show_players_points(players_numbers, Players);
                     Console.ReadLine();
@@ -369,7 +389,7 @@ namespace UNO
 
 
 
-            play_round(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck);
+            play_round(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Start_line, ref End_line);
         }
 
         static void Get_players_points(Player[] Players, byte players_numbers)
@@ -432,7 +452,7 @@ namespace UNO
 
             for (byte i = 0; i < players_numbers; i++)
             {
-                Player_info = String.Format("{0,-15} | {1,2}", Players[i].player_name, Players[i].player_cards.Count());
+                Player_info = String.Format("                   {0,-15} | {1,2}", Players[i].player_name, Players[i].player_cards.Count());
                 Console.WriteLine(Player_info);
             }
         }
@@ -452,9 +472,8 @@ namespace UNO
             switch (Players[current_player].player_type)
             {
                 case player_type.AI:
-                    Console.WriteLine($"{Players[current_player].player_name} est entrain de réflichir...");
-                    //System.Threading.Thread.Sleep(random.Next(800, 1200));
-                    System.Threading.Thread.Sleep(random.Next(10, 200));
+                    Console.WriteLine($"\n\r{Players[current_player].player_name} est entrain de réflichir...");
+                    System.Threading.Thread.Sleep(random.Next(800, 1200));
                     AI_choose_random_card(index_playable_card, Players, current_player, current_color, players_numbers, direction,ref card_deck_used, card_deck);
 
                     break;
@@ -986,7 +1005,6 @@ namespace UNO
                             }
                         }
                     }
-                    Console.WriteLine($"{Players[current_player].player_cards.ElementAt(index_card).types}/// {Players[current_player].player_cards.ElementAt(index_card).color}///// {Players[current_player].player_cards.ElementAt(index_card).number}");
                     card_deck_used.Add(Players[current_player].player_cards.ElementAt(index_card));
                     Players[current_player].player_cards.RemoveAt(index_card);
                     
