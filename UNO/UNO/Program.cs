@@ -227,12 +227,21 @@ namespace UNO
 
             for (byte i = 0; i < players_numbers; i++)
             {
+                bool Wrong_name = false;
                 // tant que le nom est vide
                 do
                 {
+                    Wrong_name = false;
                     Console.WriteLine($"Entrez le nom du joueur numéro : {i + 1}");
                     players_names[i] = Console.ReadLine().Replace(" ", string.Empty);
-                } while ((players_names[i] == string.Empty) || players_names[i].Length > 15);
+                    for(byte y = 0; y < i; y++)
+                    {
+                        if(players_names[i] == players_names[y])
+                        {
+                            Wrong_name = true;
+                        }
+                    }
+                } while ((players_names[i] == string.Empty) || players_names[i].Length > 15 || Wrong_name);
             }
         }
 
@@ -372,6 +381,7 @@ namespace UNO
                 Console.SetCursorPosition(Console.CursorLeft, End_line - i);
                 Console.Write(new string(' ', Console.WindowWidth));
                 Console.SetCursorPosition(Console.CursorLeft, Start_line);
+
             }
 
             //Console.ReadLine();
@@ -383,6 +393,8 @@ namespace UNO
                     Get_players_points(Players, players_numbers);
                     Show_players_points(players_numbers, Players);
                     Console.ReadLine();
+                    Environment.Exit(0);
+                    
                 }
             }
 
@@ -822,48 +834,55 @@ namespace UNO
 
             byte current_player = index_player_to_draw;
 
-            
-
-            void draw(int draw_number)
+            if(card_deck.Count == 0 && card_deck_used.Count == 0)
             {
-                // remplire le deck si il est vide
-                if (card_deck.Count() < draw_number)
+                Console.WriteLine("Il n'y a plus de carte disponible, vous devez jouer !");
+                Console.ReadLine();
+            }
+            else
+            {
+                void draw(int draw_number)
                 {
-                    do
+                    // remplire le deck si il est vide
+                    if (card_deck.Count() < draw_number)
                     {
-                        card_deck.Add(card_deck_used.ElementAt(0));
-                        card_deck_used.RemoveAt(0);
-                    } while (card_deck_used.Count() > 1);
+                        do
+                        {
+                            card_deck.Add(card_deck_used.ElementAt(0));
+                            card_deck_used.RemoveAt(0);
+                        } while (card_deck_used.Count() > 1);
 
-                    shuffle_cards(ref card_deck);
-                }
-                Console.WriteLine($"{Players[current_player].player_name} à pioché : ");
-                for (byte i = 0; i < draw_number; i++)
-                {
-                    Players[current_player].player_cards.Add(Get_card_from_deck(out card, ref card_deck));
-                    card_value = "\r\n        " + Players[current_player].player_cards.Last().types + " / " + Players[current_player].player_cards.Last().color;
-                    if (Players[current_player].player_cards.Last().types == card_type.BASIC)
-                    {
-                        card_value = card_value + " / " + Players[current_player].player_cards.Last().number;
+                        shuffle_cards(ref card_deck);
                     }
-                    Show_colored_message(Players[current_player].player_cards.Last().color, $"{card_value}\r\n");
+                    Console.WriteLine($"{Players[current_player].player_name} à pioché : ");
+                    for (byte i = 0; i < draw_number; i++)
+                    {
+                        Players[current_player].player_cards.Add(Get_card_from_deck(out card, ref card_deck));
+                        card_value = "\r\n        " + Players[current_player].player_cards.Last().types + " / " + Players[current_player].player_cards.Last().color;
+                        if (Players[current_player].player_cards.Last().types == card_type.BASIC)
+                        {
+                            card_value = card_value + " / " + Players[current_player].player_cards.Last().number;
+                        }
+                        Show_colored_message(Players[current_player].player_cards.Last().color, $"{card_value}\r\n");
+                    }
+                }
+
+                switch (card_deck_used.Last().types)
+                {
+                    case card_type.PLUS2:
+                        draw(2);
+                        break;
+
+                    case card_type.CHANGE_COLOR_DRAW_FOUR:
+                        draw(4);
+                        break;
+
+                    default:
+                        draw(1);
+                        break;
                 }
             }
             
-            switch (card_deck_used.Last().types)
-            {
-                case card_type.PLUS2:
-                    draw(2);
-                    break;
-
-                case card_type.CHANGE_COLOR_DRAW_FOUR:
-                    draw(4);
-                    break;
-
-                default:
-                    draw(1);
-                    break;
-            }
         }
 
         static bool play_drew_card(Card Drew_card, List<Card> card_deck_used, card_color current_color, player_type Player_type)
