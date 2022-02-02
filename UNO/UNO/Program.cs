@@ -83,59 +83,78 @@ namespace UNO
             Gauche
         }
 
+        public struct Player_action
+        {
+            public int Player_index { get; set; }
+            public string Player_action_text { get; set; }
+
+            public Player_action(int _)
+            {
+                Player_index = -1;
+                Player_action_text = "";
+            }
+        }
+
         static void Main()
         {
 
-        Console.Title = "UNO";
-            string title = @"
-                                     #########################(|     
-                               ##########################  @@,  ***   @@  |
-                           ###########################  @ *************** @  |
-                       ####################   #@@@ / @@ *****, @@@@@ ****** @ |
-                    #################### @@@*****/ @@@ **** @@@@@@@@##@ *****@ |
-                  ############     ### @@@@@@*****@@@ **** @ ###  @####@ **** @ |
-               ########   @@@  *** @    @@@@@@*****@@ **** @ ###### @@##@*****@ |
-             #####  @@  ** @@,*******  @ @@@@@&*****@@*****./ ###### @@@@*****@ |
-             ### #@@@@ **** @@*********** @@@@@ *****@ ***** @  #### @@@***** @ |
-       @@@  @  ##  @@@@@ **** @@*****  ******* @@ ****,@@ ****** &@@@  ****** @ |
-   @@@.*****@ ,##  @&@@@ **** @@*****@@@@ ******* **** @@@ *************** @ |
-  @@@@@ *****@ ###  @@@@@***** @@*****@@@@@@ ,********* @@@@@@   ***   @@@  |
-   @@@@@ *****@ ### /@@@@@***** @ *****@@@@@@@@@ ******* @@@@@@@@@@@@@@  |
-    @@@@@ **** @ ### @@@@@@*****@@ *****@ @@@@@@@@@@ *  @@@          |
-     @@@@@ **** @ ### @@@@@ **** @@ *****@ #  @@@@@@@@@@  ########|
-      @@@@@ *****@@ ## @@@ *****@@@@ **** @ ####  @   ##########|
-       @@@@@ ******.   .*******@@@@@@@@@@@ ###################|
-        @@@@@@ ************* @   @@@@    ##################|
-         @@@@@@@@@     &@@@@  ### ######################|
-          @@@@@@@@@@@@@  #########################|
-                     /########################     |                     
-                                                                | ";
-            int Title_index = 0;
-            do
-            {
-                Title_index++;
-                if (title.ElementAt(Title_index - 1).ToString() == "#")
-                {
-                    Show_colored_message(card_color.ROUGE, title.ElementAt(Title_index - 1).ToString());
-                }
-                else if (title.ElementAt(Title_index - 1).ToString() == "@")
-                {
-                    Console.Write("@");
-                }
-                else if (title.ElementAt(Title_index - 1).ToString() == "*")
-                {
-                    Show_colored_message(card_color.JAUNE, title.ElementAt(Title_index - 1).ToString());
-                }
-                else if (title.ElementAt(Title_index - 1).ToString() == "|")
-                {
-                    Console.WriteLine();
-                }
-                else
-                {
-                    Console.Write(" ");
-                }
-            } while (title.Length != Title_index);
 
+            string texte = "";
+            Console.Title = "UNO";
+            string title = @"
+                                     #########################(    
+                               ##########################  @@,  ***   @@  
+                           ###########################  @ *************** @  
+                       ####################   #@@@ / @@ *****, @@@@@ ****** @ 
+                    #################### @@@*****/ @@@ **** @@@@@@@@##@ *****@ 
+                  ############     ### @@@@@@*****@@@ **** @ ###  @####@ **** @ 
+               ########   @@@  *** @    @@@@@@*****@@ **** @ ###### @@##@*****@ 
+             #####  @@  ** @@,*******  @ @@@@@&*****@@*****./ ###### @@@@*****@ 
+             ### #@@@@ **** @@*********** @@@@@ *****@ ***** @  #### @@@***** @ 
+       @@@  @  ##  @@@@@ **** @@*****  ******* @@ ****,@@ ****** &@@@  ****** @ 
+   @@@.*****@ ,##  @&@@@ **** @@*****@@@@ ******* **** @@@ *************** @ 
+  @@@@@ *****@ ###  @@@@@***** @@*****@@@@@@ ,********* @@@@@@   ***   @@@  
+   @@@@@ *****@ ### /@@@@@***** @ *****@@@@@@@@@ ******* @@@@@@@@@@@@@@  
+    @@@@@ **** @ ### @@@@@@*****@@ *****@ @@@@@@@@@@ *  @@@          
+     @@@@@ **** @ ### @@@@@ **** @@ *****@ #  @@@@@@@@@@  ########
+      @@@@@ *****@@ ## @@@ *****@@@@ **** @ ####  @   ##########
+       @@@@@ ******.   .*******@@@@@@@@@@@ ###################
+        @@@@@@ ************* @   @@@@    ##################
+         @@@@@@@@@     &@@@@  ### ######################
+          @@@@@@@@@@@@@  #########################
+                     /########################                         
+                                                                 |";
+            int Title_index = 0;
+            for (int i = 0; i < title.Length; i++)
+            {
+                do
+                {
+                    Title_index++;
+                    texte = texte + title.ElementAt(Title_index - 1);
+
+                } while (title.ElementAt(Title_index - 1) == title.ElementAt(Title_index));
+
+                switch (title.ElementAt(Title_index - 1).ToString())
+                {
+                    case "#":
+                        Show_colored_message(card_color.ROUGE, texte);
+                        break;
+                    case "@":
+                        Console.Write(texte);
+                        break;
+                    case "*":
+                        Show_colored_message(card_color.JAUNE, texte);
+                        break;
+
+                    default:
+                        Console.Write(texte);
+                        break;
+                }
+                i = Title_index;
+                texte = "";
+            }
+
+            Console.WriteLine();
             int[] index_playable_card = new int[120];// indexs des cartes jouables des joueurs
             int Start_line = 0;
             int End_line = 0;
@@ -155,11 +174,27 @@ namespace UNO
             List<Card> deck_card = new List<Card>();// liste des cartes non jouées
             List<Card> deck_card_used = new List<Card>();// cartes jouées
 
-            
+            Player_action[] Players_actions = new Player_action[4];
+
+            // Assigner les valeurs par défauts
+                for (int i = 0; i < Players_actions.Length ; i++)
+                {
+                    Players_actions[i] = new Player_action(0);
+                }
+
+
+
+
+
+
             Get_players_numbers(ref players_numbers);
             Get_players_names(ref players_numbers, ref players_names);
             Get_player_type(players_numbers, ref players_types);
             create_players(players_names, players_types, deck_card, Players);
+
+
+
+ 
             //Loading("Génération des cartes en cours");
             add_cards(ref deck_card);
             //Loading("Mélange des cartes en cours");
@@ -181,7 +216,7 @@ namespace UNO
                 Console.Write(new string(' ', Console.WindowWidth));
                 Console.SetCursorPosition(Console.CursorLeft, Start_line);
             }
-            play_round(players_numbers, Current_direction, ref current_player, ref Players, deck_card_used, ref index_playable_card, ref current_color, ref deck_card, ref Start_line, ref End_line);
+            play_round(players_numbers, Current_direction, ref current_player, ref Players, deck_card_used, ref index_playable_card, ref current_color, ref deck_card, ref Start_line, ref End_line, ref  Players_actions);
 
             Console.Read();
 
@@ -227,7 +262,7 @@ namespace UNO
 
             for (byte i = 0; i < players_numbers; i++)
             {
-                bool Wrong_name = false;
+                bool Wrong_name;
                 // tant que le nom est vide
                 do
                 {
@@ -256,7 +291,7 @@ namespace UNO
                 {
                     Console.WriteLine($"Quel est le type du joueur numéro : { i + 1 } ?");
                     Current_player_type = Console.ReadLine().ToUpper();
-                } while (byte.TryParse(Current_player_type, out byte int_value) || (!Enum.TryParse(Current_player_type, out players_types[i])));
+                } while (byte.TryParse(Current_player_type, out byte _) || (!Enum.TryParse(Current_player_type, out players_types[i])));
             }
         }
 
@@ -321,12 +356,11 @@ namespace UNO
 
         static void deal_cards(ref Player[] Players, byte players_numbers, ref List<Card> card_deck)
         {
-            Card card;
             for (byte i = 0; i < 8; i++)
             {
                 for (byte p = 0; p < players_numbers; p++)
                 {
-                    Players[p].player_cards.Add(Get_card_from_deck(out card, ref card_deck));
+                    Players[p].player_cards.Add(Get_card_from_deck(out _, ref card_deck));
                 }
             }
         }
@@ -349,10 +383,11 @@ namespace UNO
         }
 
 
-        static void play_round(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck,ref int Start_line, ref int End_line)
+        static void play_round(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck,ref int Start_line, ref int End_line, ref Player_action[] Players_actions)
         {
             Start_line = Console.CursorTop;
             Console.WriteLine($"\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r {Players[current_player].player_name}, c'est à vous de jouez ! \n\r\n\r");
+            Show_players_actions(Players_actions, Players);
             Show_last_card_played(card_deck_used.Last(), current_color);
             show_number_of_cards_of_each_player(Players, players_numbers);
             Sort_cards(ref Players, players_numbers, current_player);
@@ -363,16 +398,16 @@ namespace UNO
             }
 
             Choose_card(current_player, ref Players, card_deck_used, index_playable_card, ref card_deck, players_numbers, current_color, direction);
-            Play_card(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck);
+            Play_card(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref  Players_actions);
 
 
             End_line = Console.CursorTop;
-            end_round(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Start_line, ref End_line);
+            end_round(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Start_line, ref End_line,  ref  Players_actions);
 
 
         }
 
-        static void end_round(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck, ref int Start_line, ref int End_line)
+        static void end_round(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck, ref int Start_line, ref int End_line, ref Player_action[] Players_actions)
         {
 
             // Effacer la derniere carte jouée
@@ -401,7 +436,7 @@ namespace UNO
 
 
 
-            play_round(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Start_line, ref End_line);
+            play_round(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Start_line, ref End_line, ref Players_actions);
         }
 
         static void Get_players_points(Player[] Players, byte players_numbers)
@@ -588,7 +623,7 @@ namespace UNO
             return false;
         }
 
-        static void Play_card(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck)
+        static void Play_card(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck, ref Player_action[] Players_actions)
         {
 
 
@@ -615,14 +650,14 @@ namespace UNO
 
                 case card_type.CHANGE_COLOR_DRAW_FOUR:
                     Draw_card(Players, card_deck, players_numbers, card_deck_used, direction, Get_next_player(direction, current_player, players_numbers));
-                    change_color(ref current_color, current_player, Players[current_player].player_type, Players);
+                    change_color(ref current_color, current_player, Players[current_player].player_type, Players, ref Players_actions);
                     Console.WriteLine($"{ Players[Get_next_player(direction, current_player, players_numbers)].player_name}, vous ne pouvez pas jouer ce tour !");
                     current_player = Get_next_player(direction, current_player, players_numbers);
 
                     break;
 
                 case card_type.CHANGE_COLOR:
-                    change_color(ref current_color, current_player, Players[current_player].player_type, Players);
+                    change_color(ref current_color, current_player, Players[current_player].player_type, Players, ref  Players_actions);
 
                     break;
 
@@ -744,7 +779,7 @@ namespace UNO
         }
 
         // Changer la couleur du jeu
-        static void change_color(ref card_color current_color, byte current_player, player_type Player_type, Player[] Players)
+        static void change_color(ref card_color current_color, byte current_player, player_type Player_type, Player[] Players, ref Player_action[] Players_actions)
         {
             string color;
 
@@ -789,8 +824,9 @@ namespace UNO
             // afficher la nouvelle couleur
             Console.Write("La couleur est maitenant du ");
             Show_colored_message(current_color, $"{current_color} \n\r");
-
-
+            Update_players_actions_list(ref Players_actions, $"#player_name#1 à changé la couleur en &{current_color}& |{current_color}|", current_player);
+            Update_players_actions_list(ref Players_actions, $"#player_name#2 à changé la couleur en &{current_color}& |{current_color}|", current_player);
+            Update_players_actions_list(ref Players_actions, $"#player_name#3 à changé la couleur en &{current_color}& |{current_color}|", current_player);
 
         }
 
@@ -937,6 +973,84 @@ namespace UNO
             }
             return false;
         }
+
+        static void Update_players_actions_list(ref Player_action[] Players_actions, string Message, int Player_index)
+        {
+            int Last_action_index = -1;
+
+            do
+            {
+                Last_action_index++;
+
+            } while (Players_actions[Last_action_index ].Player_index != -1 && Last_action_index != 3);
+
+            if(Players_actions[Players_actions.Length - 1].Player_index != - 1)
+            {
+                for(int i = 3; i > 0; i--)
+                {
+                   Players_actions[i] = Players_actions[i - 1];
+                }
+                Players_actions[0].Player_index = Player_index;
+                Players_actions[0].Player_action_text = Message;
+            }
+            else
+            {
+                Players_actions[Last_action_index].Player_index = Player_index;
+                Players_actions[Last_action_index].Player_action_text = Message;
+            }
+
+        }
+        static void Show_players_actions(Player_action[] Players_actions, Player[] Players)
+        {
+            int Last_action_index = -1;
+
+            do
+            {
+                Last_action_index++;
+
+            } while (Players_actions[Last_action_index].Player_index != -1 && Last_action_index != 3);
+            Last_action_index++;
+
+            if(Players_actions[0].Player_index != -1)
+            {
+                for (int i = 0; i < Last_action_index; i++)
+                {
+                    string Message = Players_actions[i].Player_action_text;
+                    string Color_message = stringBetween(Message, "|", "|");
+                    string String_color = stringBetween(Message, "&", "&");
+                    Message = Message.Replace("|" + Color_message + "|", "");
+                    Message = Message.Replace("&" + String_color + "&", "");
+                    Console.WriteLine(i);
+                    Message = Message.Replace("#player_name#", Players[Players_actions[i].Player_index].player_name);
+                    Console.Write($"{Message}");
+                    if (Color_message != " ")
+                    {
+                        card_color Color = (card_color)Enum.Parse(typeof(card_color), String_color);
+                        Show_colored_message(Color, Color_message);
+                    }
+                    Console.WriteLine();
+
+                }
+            }
+
+
+        }
+        static string stringBetween(string Source, string Start, string End)
+        {
+            string result = " ";
+            if (Source.Contains(Start) && Source.Contains(End))
+            {
+                int StartIndex = Source.IndexOf(Start, 0) + Start.Length;
+                int EndIndex = Source.IndexOf(End, StartIndex);
+                result = Source.Substring(StartIndex, EndIndex - StartIndex);
+                return result;
+            }
+
+            return result;
+        }
+
+
+
 
         static void AI_choose_random_card(int[] index_playable_cards, Player[] Players, byte current_player, card_color current_color, byte players_numbers, Direction direction,ref List<Card> card_deck_used, List<Card> card_deck)
         {

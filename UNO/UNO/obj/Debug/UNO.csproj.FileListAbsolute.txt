@@ -12,3 +12,10 @@ C:\Users\190133\Documents\UNO\UNO\UNO\obj\Debug\UNO.csprojAssemblyReference.cach
 C:\Users\190133\Documents\UNO\UNO\UNO\obj\Debug\UNO.csproj.CoreCompileInputs.cache
 C:\Users\190133\Documents\UNO\UNO\UNO\obj\Debug\UNO.exe
 C:\Users\190133\Documents\UNO\UNO\UNO\obj\Debug\UNO.pdb
+C:\Users\ryckb\Documents\git\UNO\UNO\UNO\obj\Debug\UNO.csproj.AssemblyReference.cache
+C:\Users\ryckb\Documents\git\UNO\UNO\UNO\obj\Debug\UNO.csproj.CoreCompileInputs.cache
+C:\Users\ryckb\Documents\git\UNO\UNO\UNO\obj\Debug\UNO.exe
+C:\Users\ryckb\Documents\git\UNO\UNO\UNO\obj\Debug\UNO.pdb
+C:\Users\ryckb\Documents\git\UNO\UNO\UNO\bin\Debug\UNO.exe.config
+C:\Users\ryckb\Documents\git\UNO\UNO\UNO\bin\Debug\UNO.exe
+C:\Users\ryckb\Documents\git\UNO\UNO\UNO\bin\Debug\UNO.pdb
