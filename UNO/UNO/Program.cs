@@ -52,8 +52,8 @@ namespace UNO
             PASSER,
             INVERSION,
             PLUS2,
-            CHANGE_COLOR,
-            CHANGE_COLOR_DRAW_FOUR
+            JOKER,
+            PLUS4
         }
 
         // enumération des couleurs de cartes
@@ -189,12 +189,21 @@ namespace UNO
 
             Get_players_numbers(ref players_numbers);
             Get_players_names(ref players_numbers, ref players_names);
+
             Get_player_type(players_numbers, ref players_types);
             create_players(players_names, players_types, deck_card, Players);
 
+            // Recuperer le plus grand nom des joueurs
+            int longest_length = 0;
+            for (int i = 0; i < players_numbers; i++)
+            {
+                if (Players[i].player_name.Length > longest_length)
+                {
+                    longest_length = Players[i].player_name.Length;
+                }
+            }
 
 
- 
             //Loading("Génération des cartes en cours");
             add_cards(ref deck_card);
             //Loading("Mélange des cartes en cours");
@@ -216,7 +225,7 @@ namespace UNO
                 Console.Write(new string(' ', Console.WindowWidth));
                 Console.SetCursorPosition(Console.CursorLeft, Start_line);
             }
-            play_round(players_numbers, Current_direction, ref current_player, ref Players, deck_card_used, ref index_playable_card, ref current_color, ref deck_card, ref Start_line, ref End_line, ref  Players_actions);
+            play_round(players_numbers, Current_direction, ref current_player, ref Players, deck_card_used, ref index_playable_card, ref current_color, ref deck_card, ref Start_line, ref End_line, ref  Players_actions, longest_length);
 
             Console.Read();
 
@@ -343,8 +352,8 @@ namespace UNO
             for (byte c = 0; c <= 3; c++)
             {
                 // Ajout des cartes spéciales "Changer de couleurs" et "Changer de couleurs + 4"
-                card_deck.Add(new Card() { types = card_type.CHANGE_COLOR, color = card_color.MULTICOLORE, number = -1 });
-                card_deck.Add(new Card() { types = card_type.CHANGE_COLOR_DRAW_FOUR, color = card_color.MULTICOLORE, number = -1 });
+                card_deck.Add(new Card() { types = card_type.JOKER, color = card_color.MULTICOLORE, number = -1 });
+                card_deck.Add(new Card() { types = card_type.PLUS4, color = card_color.MULTICOLORE, number = -1 });
             }
         }
 
@@ -383,13 +392,13 @@ namespace UNO
         }
 
 
-        static void play_round(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck,ref int Start_line, ref int End_line, ref Player_action[] Players_actions)
+        static void play_round(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck,ref int Start_line, ref int End_line, ref Player_action[] Players_actions, int longest_length)
         {
             Start_line = Console.CursorTop;
             Console.WriteLine($"\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r {Players[current_player].player_name}, c'est à vous de jouez ! \n\r\n\r");
             Show_players_actions(Players_actions, Players);
             Show_last_card_played(card_deck_used.Last(), current_color);
-            show_number_of_cards_of_each_player(Players, players_numbers);
+            show_number_of_cards_of_each_player(Players, players_numbers, longest_length);
             Sort_cards(ref Players, players_numbers, current_player);
             Can_play(current_player, Players, card_deck_used, ref index_playable_card, current_color);
             if (Players[current_player].player_type == player_type.JOUEUR)
@@ -402,12 +411,12 @@ namespace UNO
 
 
             End_line = Console.CursorTop;
-            end_round(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Start_line, ref End_line,  ref  Players_actions);
+            end_round(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Start_line, ref End_line,  ref  Players_actions, longest_length);
 
 
         }
 
-        static void end_round(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck, ref int Start_line, ref int End_line, ref Player_action[] Players_actions)
+        static void end_round(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck, ref int Start_line, ref int End_line, ref Player_action[] Players_actions, int longest_length)
         {
 
             // Effacer la derniere carte jouée
@@ -436,7 +445,7 @@ namespace UNO
 
 
 
-            play_round(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Start_line, ref End_line, ref Players_actions);
+            play_round(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Start_line, ref End_line, ref Players_actions, longest_length);
         }
 
         static void Get_players_points(Player[] Players, byte players_numbers)
@@ -455,7 +464,7 @@ namespace UNO
                         case card_type.PASSER: case card_type.INVERSION :case card_type.PLUS2:
                             current_player_point = current_player_point + 20;
                             break;
-                        case card_type.CHANGE_COLOR: case card_type.CHANGE_COLOR_DRAW_FOUR:
+                        case card_type.JOKER: case card_type.PLUS4:
                             current_player_point = current_player_point + 50;
                             break;
 
@@ -481,25 +490,26 @@ namespace UNO
 
         static void Show_last_card_played(Card Last_card, card_color current_color)
         {
-            string card = Last_card.types + " / " + Last_card.color;
+            string card = Last_card.types + " | " + Last_card.color;
 
             Console.Write("\n\r                    Dernière carte jouée ");
 
             if (Last_card.types == card_type.BASIC)
             {
-                card = card + " / " + Last_card.number;
+                card = card + " | " + Last_card.number;
             }
             Show_colored_message(current_color, $"{card} \n\r\n\r\n\r");
 
         }
-        static void show_number_of_cards_of_each_player(Player[] Players, byte players_numbers)
+        static void show_number_of_cards_of_each_player(Player[] Players, byte players_numbers, int longest_length)
         {
             string Player_info;
             Console.WriteLine("Voici le nombre de carte de chaque joueur\n\r");
 
+
             for (byte i = 0; i < players_numbers; i++)
             {
-                Player_info = String.Format("                   {0,-15} | {1,2}", Players[i].player_name, Players[i].player_cards.Count());
+                Player_info = String.Format("                   {0," + longest_length + "} | {1,2}", Players[i].player_name, Players[i].player_cards.Count());
                 Console.WriteLine(Player_info);
             }
         }
@@ -520,7 +530,7 @@ namespace UNO
             {
                 case player_type.AI:
                     Console.WriteLine($"\n\r{Players[current_player].player_name} est entrain de réflichir...");
-                    System.Threading.Thread.Sleep(random.Next(800, 1200));
+                    System.Threading.Thread.Sleep(random.Next(3000, 4000));
                     AI_choose_random_card(index_playable_card, Players, current_player, current_color, players_numbers, direction,ref card_deck_used, card_deck);
 
                     break;
@@ -648,7 +658,7 @@ namespace UNO
 
                     break;
 
-                case card_type.CHANGE_COLOR_DRAW_FOUR:
+                case card_type.PLUS4:
                     Draw_card(Players, card_deck, players_numbers, card_deck_used, direction, Get_next_player(direction, current_player, players_numbers));
                     change_color(ref current_color, current_player, Players[current_player].player_type, Players, ref Players_actions);
                     Console.WriteLine($"{ Players[Get_next_player(direction, current_player, players_numbers)].player_name}, vous ne pouvez pas jouer ce tour !");
@@ -656,7 +666,7 @@ namespace UNO
 
                     break;
 
-                case card_type.CHANGE_COLOR:
+                case card_type.JOKER:
                     change_color(ref current_color, current_player, Players[current_player].player_type, Players, ref  Players_actions);
 
                     break;
@@ -668,7 +678,7 @@ namespace UNO
             {
                 current_color = card_deck_used.Last().color;
             }
-
+            Update_players_actions_list(ref Players_actions, $"#player_name# a joué  &{card_deck_used.Last().color}& |{card_deck_used.Last().types}  {card_deck_used.Last().color} \\ {card_deck_used.Last().number}|", current_player);
             current_player = Get_next_player(direction, current_player, players_numbers);
 
         }
@@ -680,10 +690,13 @@ namespace UNO
             byte index_card = 0;
 
             Console.WriteLine("\r\n Voici vos cartes ");
+            // récupèrer le plus grand length des types de cartes du joueur
+            int longest_length = Players[current_player].player_cards.Max(c => c == null ? 0 : c.types.ToString().Length);
+
 
             for (byte i = 0; i < Players[current_player].player_cards.Count; i++)
             {
-                card = String.Format("              {0,-22} | {1,-12}", Players[current_player].player_cards.ElementAt(i).types, Players[current_player].player_cards.ElementAt(i).color);
+                card = String.Format("              {0,-" + longest_length + "} | {1,-12}", Players[current_player].player_cards.ElementAt(i).types, Players[current_player].player_cards.ElementAt(i).color);
                 if ((Players[current_player].player_cards.ElementAt(i).types == card_type.BASIC))
                 {
                     card = card + String.Format("|{0}", Players[current_player].player_cards.ElementAt(i).number);
@@ -824,9 +837,7 @@ namespace UNO
             // afficher la nouvelle couleur
             Console.Write("La couleur est maitenant du ");
             Show_colored_message(current_color, $"{current_color} \n\r");
-            Update_players_actions_list(ref Players_actions, $"#player_name#1 à changé la couleur en &{current_color}& |{current_color}|", current_player);
-            Update_players_actions_list(ref Players_actions, $"#player_name#2 à changé la couleur en &{current_color}& |{current_color}|", current_player);
-            Update_players_actions_list(ref Players_actions, $"#player_name#3 à changé la couleur en &{current_color}& |{current_color}|", current_player);
+            Update_players_actions_list(ref Players_actions, $"#player_name# à changé la couleur en &{current_color}& |{current_color}|", current_player);
 
         }
 
@@ -909,7 +920,7 @@ namespace UNO
                         draw(2);
                         break;
 
-                    case card_type.CHANGE_COLOR_DRAW_FOUR:
+                    case card_type.PLUS4:
                         draw(4);
                         break;
 
@@ -984,14 +995,14 @@ namespace UNO
 
             } while (Players_actions[Last_action_index ].Player_index != -1 && Last_action_index != 3);
 
-            if(Players_actions[Players_actions.Length - 1].Player_index != - 1)
+            if (Players_actions[Players_actions.Length - 1].Player_index != -1)
             {
-                for(int i = 3; i > 0; i--)
+                for (int i = 0; i <= 2; i++)
                 {
-                   Players_actions[i] = Players_actions[i - 1];
+                    Players_actions[i] = Players_actions[i + 1];
                 }
-                Players_actions[0].Player_index = Player_index;
-                Players_actions[0].Player_action_text = Message;
+                Players_actions[3].Player_index = Player_index;
+                Players_actions[3].Player_action_text = Message;
             }
             else
             {
@@ -1008,20 +1019,21 @@ namespace UNO
             {
                 Last_action_index++;
 
-            } while (Players_actions[Last_action_index].Player_index != -1 && Last_action_index != 3);
-            Last_action_index++;
 
-            if(Players_actions[0].Player_index != -1)
+            } while (Last_action_index != 4 && Players_actions[Last_action_index].Player_index != -1);
+
+            
+            if (Players_actions[0].Player_index != -1)
             {
-                for (int i = 0; i < Last_action_index; i++)
+                Console.WriteLine("                   last player actions ");
+                for (int i = 1; i <= Last_action_index; i++)
                 {
-                    string Message = Players_actions[i].Player_action_text;
-                    string Color_message = stringBetween(Message, "|", "|");
-                    string String_color = stringBetween(Message, "&", "&");
+                    string Message = Players_actions[i - 1].Player_action_text;
+                    string Color_message = Get_substring_from_string(Message, "|");
+                    string String_color = Get_substring_from_string(Message, "&");
                     Message = Message.Replace("|" + Color_message + "|", "");
                     Message = Message.Replace("&" + String_color + "&", "");
-                    Console.WriteLine(i);
-                    Message = Message.Replace("#player_name#", Players[Players_actions[i].Player_index].player_name);
+                    Message = Message.Replace("#player_name#", Players[Players_actions[i - 1].Player_index].player_name);
                     Console.Write($"{Message}");
                     if (Color_message != " ")
                     {
@@ -1035,17 +1047,16 @@ namespace UNO
 
 
         }
-        static string stringBetween(string Source, string Start, string End)
+        static string Get_substring_from_string(string Message, string Start)
         {
             string result = " ";
-            if (Source.Contains(Start) && Source.Contains(End))
+            if (Message.Contains(Start))
             {
-                int StartIndex = Source.IndexOf(Start, 0) + Start.Length;
-                int EndIndex = Source.IndexOf(End, StartIndex);
-                result = Source.Substring(StartIndex, EndIndex - StartIndex);
+                int Start_index = Message.IndexOf(Start, 0) + Start.Length;
+                int End_index = Message.IndexOf(Start, Start_index);
+                result = Message.Substring(Start_index, End_index - Start_index);
                 return result;
             }
-
             return result;
         }
 
@@ -1063,7 +1074,7 @@ namespace UNO
             List<Card> Card_to_test = new List<Card>();
             Card Drew_card = new Card();
 
-            byte[,] Cards_color_numbers = new byte[4, 2] { { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } }; // Tableau contentant la couleur et son nombre de cartes dans le deck du joueur (1: coleur, 2: nombre de cartes)
+            byte[,] Cards_color_numbers = new byte[4, 2] { { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 } }; // Matrice contentant la couleur et son nombre de cartes dans le deck du joueur (1: coleur, 2: nombre de cartes)
             byte current_type_card = 0;// Nombre de couleur de carte actuelle 
             byte index_card = 0;
             byte card_number = 0;
@@ -1078,7 +1089,7 @@ namespace UNO
 
             var random = new Random(); // Random
 
-            // Calculer le pourcentage de joueur une carte spéciale 
+            // Calculer le pourcentage de jouer une carte spéciale 
             //Pourcentage = random.Next((Next_player_number_card - AI_number_cards) * -10, 100);
 
             if (Next_player_number_card < 5 && Pourcentage == 100 && Players[current_player].player_cards.Any(card => card.color == card_color.MULTICOLORE))
