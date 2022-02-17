@@ -155,9 +155,9 @@ namespace UNO
             }
 
             Console.WriteLine();
-            int[] index_playable_card = new int[120];// indexs des cartes jouables des joueurs
-            int Start_line = 0;
-            int End_line = 0;
+            int[] index_playable_card = new int[120];// index des cartes jouables des joueurs
+            int Start_line;
+            int End_line;
 
             byte players_numbers = 0;// nombre de joueurs
             byte current_player = 0;// valeur du joueur actuelle 
@@ -406,7 +406,7 @@ namespace UNO
                 show_player_cards(current_player, Players, index_playable_card);
             }
 
-            Choose_card(current_player, ref Players, card_deck_used, index_playable_card, ref card_deck, players_numbers, current_color, direction);
+            Choose_card(current_player, ref Players, card_deck_used, index_playable_card, ref card_deck, players_numbers, current_color, direction, ref Players_actions);
             Play_card(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref  Players_actions);
 
 
@@ -516,7 +516,7 @@ namespace UNO
 
 
 
-        static void Choose_card(byte current_player, ref Player[] Players, List<Card> card_deck_used, int[] index_playable_card, ref List<Card> card_deck, byte players_numbers, card_color current_color, Direction direction)
+        static void Choose_card(byte current_player, ref Player[] Players, List<Card> card_deck_used, int[] index_playable_card, ref List<Card> card_deck, byte players_numbers, card_color current_color, Direction direction, ref Player_action[] Players_actions)
         {
             var random = new Random();// variable random
 
@@ -531,7 +531,7 @@ namespace UNO
                 case player_type.AI:
                     Console.WriteLine($"\n\r{Players[current_player].player_name} est entrain de réflichir...");
                     System.Threading.Thread.Sleep(random.Next(3000, 4000));
-                    AI_choose_random_card(index_playable_card, Players, current_player, current_color, players_numbers, direction,ref card_deck_used, card_deck);
+                    AI_choose_random_card(index_playable_card, Players, current_player, current_color, players_numbers, direction,ref card_deck_used, card_deck, ref Players_actions);
 
                     break;
 
@@ -580,7 +580,7 @@ namespace UNO
 
                     if (card_choice_type == "PIOCHER")
                     {
-                        Draw_card(Players, card_deck, players_numbers, card_deck_used, direction, current_player);
+                        Draw_card(Players, card_deck, players_numbers, card_deck_used, direction, current_player, ref Players_actions);
                         Drew_card = Players[current_player].player_cards.Last();
                         if(play_drew_card(Drew_card, card_deck_used, current_color, Players[current_player].player_type))
                         {
@@ -652,14 +652,14 @@ namespace UNO
                     break;
 
                 case card_type.PLUS2:
-                    Draw_card(Players, card_deck, players_numbers, card_deck_used, direction, Get_next_player(direction, current_player, players_numbers));
+                    Draw_card(Players, card_deck, players_numbers, card_deck_used, direction, Get_next_player(direction, current_player, players_numbers),ref Players_actions);
                     Console.WriteLine($"{ Players[Get_next_player(direction, current_player, players_numbers)].player_name}, vous ne pouvez pas jouer ce tour !");
                     current_player = Get_next_player(direction, current_player, players_numbers);
 
                     break;
 
                 case card_type.PLUS4:
-                    Draw_card(Players, card_deck, players_numbers, card_deck_used, direction, Get_next_player(direction, current_player, players_numbers));
+                    Draw_card(Players, card_deck, players_numbers, card_deck_used, direction, Get_next_player(direction, current_player, players_numbers), ref Players_actions);
                     change_color(ref current_color, current_player, Players[current_player].player_type, Players, ref Players_actions);
                     Console.WriteLine($"{ Players[Get_next_player(direction, current_player, players_numbers)].player_name}, vous ne pouvez pas jouer ce tour !");
                     current_player = Get_next_player(direction, current_player, players_numbers);
@@ -678,7 +678,13 @@ namespace UNO
             {
                 current_color = card_deck_used.Last().color;
             }
-            Update_players_actions_list(ref Players_actions, $"#player_name# a joué  &{card_deck_used.Last().color}& |{card_deck_used.Last().types}  {card_deck_used.Last().color} \\ {card_deck_used.Last().number}|", current_player);
+            string Player_action = $"#player_name# a joué  &{card_deck_used.Last().color}& £{card_deck_used.Last().types} | {card_deck_used.Last().color}";
+            if (card_deck_used.Last().types == card_type.BASIC)
+            {
+                Player_action = Player_action + $" | {card_deck_used.Last().number}";
+            }
+            Player_action = Player_action + "£";
+            Update_players_actions_list(ref Players_actions, Player_action, current_player);
             current_player = Get_next_player(direction, current_player, players_numbers);
 
         }
@@ -837,7 +843,7 @@ namespace UNO
             // afficher la nouvelle couleur
             Console.Write("La couleur est maitenant du ");
             Show_colored_message(current_color, $"{current_color} \n\r");
-            Update_players_actions_list(ref Players_actions, $"#player_name# à changé la couleur en &{current_color}& |{current_color}|", current_player);
+            Update_players_actions_list(ref Players_actions, $"#player_name# a changé la couleur en &{current_color}& £{current_color}£", current_player);
 
         }
 
@@ -873,7 +879,7 @@ namespace UNO
         }
 
         // distribuer des cartes
-        static void Draw_card(Player[] Players, List<Card> card_deck, byte players_numbers, List<Card> card_deck_used, Direction direction, byte index_player_to_draw)
+        static void Draw_card(Player[] Players, List<Card> card_deck, byte players_numbers, List<Card> card_deck_used, Direction direction, byte index_player_to_draw, ref Player_action[] player_actions)
         {
             string card_value;
 
@@ -913,21 +919,26 @@ namespace UNO
                         Show_colored_message(Players[current_player].player_cards.Last().color, $"{card_value}\r\n");
                     }
                 }
-
+                int card_draw_number;
                 switch (card_deck_used.Last().types)
                 {
                     case card_type.PLUS2:
                         draw(2);
+                        card_draw_number = 2;
                         break;
 
                     case card_type.PLUS4:
                         draw(4);
+                        card_draw_number = 4;
                         break;
 
                     default:
                         draw(1);
+                        card_draw_number = 1;
                         break;
                 }
+                string player_action = $"#player_name# a pioché {card_draw_number} carte(s)";
+                Update_players_actions_list(ref player_actions, player_action, current_player);
             }
             
         }
@@ -1029,12 +1040,12 @@ namespace UNO
                 for (int i = 1; i <= Last_action_index; i++)
                 {
                     string Message = Players_actions[i - 1].Player_action_text;
-                    string Color_message = Get_substring_from_string(Message, "|");
+                    string Color_message = Get_substring_from_string(Message, "£");
                     string String_color = Get_substring_from_string(Message, "&");
-                    Message = Message.Replace("|" + Color_message + "|", "");
+                    Message = Message.Replace("£" + Color_message + "£", "");
                     Message = Message.Replace("&" + String_color + "&", "");
                     Message = Message.Replace("#player_name#", Players[Players_actions[i - 1].Player_index].player_name);
-                    Console.Write($"{Message}");
+                    Console.Write($"                {Message}");
                     if (Color_message != " ")
                     {
                         card_color Color = (card_color)Enum.Parse(typeof(card_color), String_color);
@@ -1063,7 +1074,7 @@ namespace UNO
 
 
 
-        static void AI_choose_random_card(int[] index_playable_cards, Player[] Players, byte current_player, card_color current_color, byte players_numbers, Direction direction,ref List<Card> card_deck_used, List<Card> card_deck)
+        static void AI_choose_random_card(int[] index_playable_cards, Player[] Players, byte current_player, card_color current_color, byte players_numbers, Direction direction,ref List<Card> card_deck_used, List<Card> card_deck, ref Player_action[] Players_actions)
         {
 
             
@@ -1162,7 +1173,7 @@ namespace UNO
                 // piocher une carte
                 else
                 {
-                   Draw_card(Players, card_deck, players_numbers, card_deck_used, direction, current_player);
+                   Draw_card(Players, card_deck, players_numbers, card_deck_used, direction, current_player,ref Players_actions);
                    Drew_card = Players[current_player].player_cards.Last();
                     // jouer la carte si elle peut etre jouée
                     if (play_drew_card(Drew_card, card_deck_used, current_color, Players[current_player].player_type))
