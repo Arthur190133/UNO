@@ -101,6 +101,7 @@ namespace UNO
 
             string texte = "";
             Console.Title = "UNO";
+            // Logo du Uno
             string title = @"
                                      #########################(    
                                ##########################  @@,  ***   @@  
@@ -124,6 +125,8 @@ namespace UNO
           @@@@@@@@@@@@@  #########################
                      /########################                         
                                                                  |";
+
+            // Afficher le logo du Uno
             int Title_index = 0;
             for (int i = 0; i < title.Length; i++)
             {
@@ -153,8 +156,8 @@ namespace UNO
                 i = Title_index;
                 texte = "";
             }
-
             Console.WriteLine();
+
             int[] index_playable_card = new int[120];// index des cartes jouables des joueurs
             int Start_line;
             int End_line;
@@ -174,7 +177,7 @@ namespace UNO
             List<Card> deck_card = new List<Card>();// liste des cartes non jouées
             List<Card> deck_card_used = new List<Card>();// cartes jouées
 
-            Player_action[] Players_actions = new Player_action[4];
+            Player_action[] Players_actions = new Player_action[4];// dernières actions des joueurs
 
             // Assigner les valeurs par défauts
                 for (int i = 0; i < Players_actions.Length ; i++)
@@ -182,15 +185,13 @@ namespace UNO
                     Players_actions[i] = new Player_action(0);
                 }
 
-
-
-
-
-
+            // Recuperer le nombre de joueur
             Get_players_numbers(ref players_numbers);
+            // Recuperer le nom des joueurs
             Get_players_names(ref players_numbers, ref players_names);
-
+            // Recuperer le type des joueurs
             Get_player_type(players_numbers, ref players_types);
+            // créer les joueurs
             create_players(players_names, players_types, deck_card, Players);
 
             // Recuperer le plus grand nom des joueurs
@@ -205,13 +206,20 @@ namespace UNO
 
 
             //Loading("Génération des cartes en cours");
+            // Ajouter les cartes du Uno dans le deck
             add_cards(ref deck_card);
             //Loading("Mélange des cartes en cours");
+            // Melanger les cartes 
             shuffle_cards(ref deck_card);
             //Loading("Distribution des cartes en cours");
+            // Distribuer les cartes aux joueurs
             deal_cards(ref Players, players_numbers, ref deck_card);
-            deck_card_used.Add(Get_card_from_deck(out Card card, ref deck_card));
+            // Ajouter la première carte au deck de cartes jouées
+            deck_card_used.Add(Get_card_from_deck(out Card _, ref deck_card));
+            // Changer la couleur du jeu
             current_color = deck_card_used.Last().color;
+
+            // Si la première couleur de carte est MULTICOLORE, choisir une couleur aléatoirement
             if (current_color == card_color.MULTICOLORE)
             {
                 Random_color(ref current_color);
@@ -272,7 +280,7 @@ namespace UNO
             for (byte i = 0; i < players_numbers; i++)
             {
                 bool Wrong_name;
-                // tant que le nom est vide
+                // tant que le nom est vide ou que le nom est déjà pris
                 do
                 {
                     Wrong_name = false;
@@ -357,12 +365,14 @@ namespace UNO
             }
         }
 
+        // Mélanger les cartes
         static void shuffle_cards(ref List<Card> card_deck)
         {
             var random = new Random();
             card_deck = card_deck.OrderBy(random_card => random.Next()).ToList();
         }
 
+        // Distribuer les cartes
         static void deal_cards(ref Player[] Players, byte players_numbers, ref List<Card> card_deck)
         {
             for (byte i = 0; i < 8; i++)
@@ -374,52 +384,62 @@ namespace UNO
             }
         }
 
+        // Trier les cartes
         static void Sort_cards(ref Player[] Players, byte players_numbers, byte current_player)
         {
             Players[current_player].player_cards = Players[current_player].player_cards.OrderBy(color => color.color).ToList();
         }
 
+        // Récuperer une carte du deck du Uno
         static Card Get_card_from_deck(out Card card, ref List<Card> card_deck)
         {
-            card = new Card();
-
-            card.color = card_deck.First().color;
-            card.types = card_deck.First().types;
-            card.number = card_deck.First().number;
+            card = new Card
+            {
+                color = card_deck.First().color,
+                types = card_deck.First().types,
+                number = card_deck.First().number
+            };
             card_deck.RemoveAt(0);
 
             return card;
         }
 
-
+        // Commencer une manche
         static void play_round(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck,ref int Start_line, ref int End_line, ref Player_action[] Players_actions, int longest_length)
         {
             Start_line = Console.CursorTop;
             Console.WriteLine($"\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r {Players[current_player].player_name}, c'est à vous de jouez ! \n\r\n\r");
-            Show_players_actions(Players_actions, Players);
-            Show_last_card_played(card_deck_used.Last(), current_color);
-            show_number_of_cards_of_each_player(Players, players_numbers, longest_length);
-            Sort_cards(ref Players, players_numbers, current_player);
-            Can_play(current_player, Players, card_deck_used, ref index_playable_card, current_color);
+            Show_players_actions(Players_actions, Players);// afficher les dernières actions des joueurs
+            Show_last_card_played(card_deck_used.Last(), current_color);// afficher la dernière carte jouée
+            show_number_of_cards_of_each_player(Players, players_numbers, longest_length);// afficher le nombre de carte de chaque joueur
+            Sort_cards(ref Players, players_numbers, current_player);// trier les cartes du joueur
+            Can_play(current_player, Players, card_deck_used, ref index_playable_card, current_color);// récuperer les cartes jouable du joueur
             if (Players[current_player].player_type == player_type.JOUEUR)
             {
-                show_player_cards(current_player, Players, index_playable_card);
+                show_player_cards(current_player, Players, index_playable_card);// afficher les cartes du joueurs qui joue, seulement si c'est un JOUEUR
             }
 
-            Choose_card(current_player, ref Players, card_deck_used, index_playable_card, ref card_deck, players_numbers, current_color, direction, ref Players_actions);
-            Play_card(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref  Players_actions);
-
+            if(Choose_card(current_player, ref Players, card_deck_used, index_playable_card, ref card_deck, players_numbers, current_color, direction, ref Players_actions))// choisir une carte à jouer
+            {
+                
+                Play_card(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Players_actions);// jouer la carte que le joueur a choisis
+            }
+            else
+            {
+                current_player = Get_next_player(direction, current_player, players_numbers);
+            }
 
             End_line = Console.CursorTop;
-            end_round(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Start_line, ref End_line,  ref  Players_actions, longest_length);
+            end_round(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Start_line, ref End_line,  ref  Players_actions, longest_length);// fin de la manche
 
 
         }
 
+        // Fin de manche
         static void end_round(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck, ref int Start_line, ref int End_line, ref Player_action[] Players_actions, int longest_length)
         {
 
-            // Effacer la derniere carte jouée
+            
             for (int i = 0; i < End_line - Start_line; i++)
             {
                 Console.SetCursorPosition(Console.CursorLeft, End_line - i);
@@ -428,14 +448,14 @@ namespace UNO
 
             }
 
-            //Console.ReadLine();
+            
             for (int i = 0; i < players_numbers; i++)
             {
                 if (Players[i].player_cards.Count() == 0)
                 {
                     Console.WriteLine($"\n\r\n\r\n\r{Players[i].player_name} à gagné");
                     Get_players_points(Players, players_numbers);
-                    Show_players_points(players_numbers, Players);
+                    Show_players_points(players_numbers, Players, longest_length);
                     Console.ReadLine();
                     Environment.Exit(0);
                     
@@ -475,7 +495,7 @@ namespace UNO
             }
         }
 
-        static void Show_players_points(byte players_numbers, Player[] Players)
+        static void Show_players_points(byte players_numbers, Player[] Players, int longest_length)
         {
             string player_points = "";
             Array.Sort(Players, delegate(Player point_x, Player point_y) { return point_x.player_points.CompareTo(point_y.player_points); });
@@ -483,7 +503,7 @@ namespace UNO
             Console.WriteLine("         Voici vos points\n\r");
             for(int i = 0; i < players_numbers; i++)
             {
-                player_points = String.Format("         n°{0,-1} |{1,-15} | {2,-4}", i + 1 ,Players[i].player_name , Players[i].player_points);
+                player_points = String.Format("         n°{0,-1} |{1,-" + longest_length +"} | {2,-4}", i + 1 ,Players[i].player_name , Players[i].player_points);
                 Console.WriteLine(player_points);
             }
         }
@@ -516,21 +536,24 @@ namespace UNO
 
 
 
-        static void Choose_card(byte current_player, ref Player[] Players, List<Card> card_deck_used, int[] index_playable_card, ref List<Card> card_deck, byte players_numbers, card_color current_color, Direction direction, ref Player_action[] Players_actions)
+        static bool Choose_card(byte current_player, ref Player[] Players, List<Card> card_deck_used, int[] index_playable_card, ref List<Card> card_deck, byte players_numbers, card_color current_color, Direction direction, ref Player_action[] Players_actions)
         {
             var random = new Random();// variable random
 
-            string card_choice_type = null;
+            string card_choice_type;
             string card_choice_color = null;
             string card_choice_number = null;
 
             Card Drew_card;
 
+            bool return_value = true;
+
             switch (Players[current_player].player_type)
             {
                 case player_type.AI:
                     Console.WriteLine($"\n\r{Players[current_player].player_name} est entrain de réflichir...");
-                    System.Threading.Thread.Sleep(random.Next(3000, 4000));
+                    //System.Threading.Thread.Sleep(random.Next(3000, 4000));
+                    System.Threading.Thread.Sleep(random.Next(300,350));
                     AI_choose_random_card(index_playable_card, Players, current_player, current_color, players_numbers, direction,ref card_deck_used, card_deck, ref Players_actions);
 
                     break;
@@ -566,6 +589,7 @@ namespace UNO
 
 
                     } while (!card_exist(card_choice_type, card_choice_color, card_choice_number, Players, current_player, index_playable_card));
+
                     if (card_choice_type != "PIOCHER")
                     {
                         if (card_choice_type == "BASIC")
@@ -577,19 +601,25 @@ namespace UNO
                             card_deck_used.Add(new Card() { types = (card_type)Enum.Parse(typeof(card_type), card_choice_type), color = (card_color)Enum.Parse(typeof(card_color), card_choice_color) });
                         }
                     }
-
-                    if (card_choice_type == "PIOCHER")
+                    else
                     {
-                        Draw_card(Players, card_deck, players_numbers, card_deck_used, direction, current_player, ref Players_actions);
+                        Draw_card(Players, card_deck, card_deck_used, current_player, ref Players_actions, new Card() { types = card_type.BASIC } );
                         Drew_card = Players[current_player].player_cards.Last();
                         if(play_drew_card(Drew_card, card_deck_used, current_color, Players[current_player].player_type))
                         {
                             card_deck_used.Add(Drew_card);
                             Players[current_player].player_cards.Remove(Drew_card);
                         }
+                        else
+                        {
+                            return_value = false;
+                        }
+
                     }
                     break;
             }
+            Console.WriteLine(return_value);
+            return return_value;
         }
 
         static bool card_exist(string card_choice_type, string card_choice_color, string card_choice_number, Player[] Players, byte current_player, int[] index_playable_card)
@@ -652,14 +682,14 @@ namespace UNO
                     break;
 
                 case card_type.PLUS2:
-                    Draw_card(Players, card_deck, players_numbers, card_deck_used, direction, Get_next_player(direction, current_player, players_numbers),ref Players_actions);
+                    Draw_card(Players, card_deck, card_deck_used,  Get_next_player(direction, current_player, players_numbers),ref Players_actions, card_deck_used.Last());
                     Console.WriteLine($"{ Players[Get_next_player(direction, current_player, players_numbers)].player_name}, vous ne pouvez pas jouer ce tour !");
                     current_player = Get_next_player(direction, current_player, players_numbers);
 
                     break;
 
                 case card_type.PLUS4:
-                    Draw_card(Players, card_deck, players_numbers, card_deck_used, direction, Get_next_player(direction, current_player, players_numbers), ref Players_actions);
+                    Draw_card(Players, card_deck,  card_deck_used, Get_next_player(direction, current_player, players_numbers), ref Players_actions, card_deck_used.Last());
                     change_color(ref current_color, current_player, Players[current_player].player_type, Players, ref Players_actions);
                     Console.WriteLine($"{ Players[Get_next_player(direction, current_player, players_numbers)].player_name}, vous ne pouvez pas jouer ce tour !");
                     current_player = Get_next_player(direction, current_player, players_numbers);
@@ -879,15 +909,13 @@ namespace UNO
         }
 
         // distribuer des cartes
-        static void Draw_card(Player[] Players, List<Card> card_deck, byte players_numbers, List<Card> card_deck_used, Direction direction, byte index_player_to_draw, ref Player_action[] player_actions)
+        static void Draw_card(Player[] Players, List<Card> card_deck, List<Card> card_deck_used, byte index_player_to_draw, ref Player_action[] player_actions, Card card)
         {
             string card_value;
 
-            Card card;
-
             byte current_player = index_player_to_draw;
 
-            if(card_deck.Count == 0 && card_deck_used.Count == 0)
+            if (card_deck.Count == 0 && card_deck_used.Count == 0)
             {
                 Console.WriteLine("Il n'y a plus de carte disponible, vous devez jouer !");
                 Console.ReadLine();
@@ -910,7 +938,7 @@ namespace UNO
                     Console.WriteLine($"{Players[current_player].player_name} à pioché : ");
                     for (byte i = 0; i < draw_number; i++)
                     {
-                        Players[current_player].player_cards.Add(Get_card_from_deck(out card, ref card_deck));
+                        Players[current_player].player_cards.Add(Get_card_from_deck(out Card _, ref card_deck));
                         card_value = "\r\n        " + Players[current_player].player_cards.Last().types + " / " + Players[current_player].player_cards.Last().color;
                         if (Players[current_player].player_cards.Last().types == card_type.BASIC)
                         {
@@ -920,7 +948,8 @@ namespace UNO
                     }
                 }
                 int card_draw_number;
-                switch (card_deck_used.Last().types)
+                // Choisir le nombre de carte à récuperer depuis le deck du Uno
+                switch (card.types)
                 {
                     case card_type.PLUS2:
                         draw(2);
@@ -938,11 +967,12 @@ namespace UNO
                         break;
                 }
                 string player_action = $"#player_name# a pioché {card_draw_number} carte(s)";
-                Update_players_actions_list(ref player_actions, player_action, current_player);
+                Update_players_actions_list(ref player_actions, player_action, current_player); // Mettre à jour la liste des actions des joueurs
             }
             
         }
-
+        
+        // Jouer la carte que le joueur viens de piocher
         static bool play_drew_card(Card Drew_card, List<Card> card_deck_used, card_color current_color, player_type Player_type)
         {
             bool can_play = false;
@@ -996,6 +1026,7 @@ namespace UNO
             return false;
         }
 
+        // Mettre à jour la liste des actions des joueurs
         static void Update_players_actions_list(ref Player_action[] Players_actions, string Message, int Player_index)
         {
             int Last_action_index = -1;
@@ -1022,6 +1053,8 @@ namespace UNO
             }
 
         }
+
+        // Afficher les actions des joueurs
         static void Show_players_actions(Player_action[] Players_actions, Player[] Players)
         {
             int Last_action_index = -1;
@@ -1058,6 +1091,8 @@ namespace UNO
 
 
         }
+
+        // Récuperer un morceau d'une chaine de caractère 
         static string Get_substring_from_string(string Message, string Start)
         {
             string result = " ";
@@ -1071,14 +1106,9 @@ namespace UNO
             return result;
         }
 
-
-
-
+        // Choisir la carte de l'IA
         static void AI_choose_random_card(int[] index_playable_cards, Player[] Players, byte current_player, card_color current_color, byte players_numbers, Direction direction,ref List<Card> card_deck_used, List<Card> card_deck, ref Player_action[] Players_actions)
         {
-
-            
-
             card_color Card_color = card_color.BLEU;
             List<card_color> Max_color = new List<card_color>();
 
@@ -1101,11 +1131,12 @@ namespace UNO
             var random = new Random(); // Random
 
             // Calculer le pourcentage de jouer une carte spéciale 
-            //Pourcentage = random.Next((Next_player_number_card - AI_number_cards) * -10, 100);
+            Pourcentage = random.Next(Math.Max(Math.Min((Next_player_number_card - AI_number_cards) * -10, 100), 0), 100);
 
-            if (Next_player_number_card < 5 && Pourcentage == 100 && Players[current_player].player_cards.Any(card => card.color == card_color.MULTICOLORE))
+            if (Next_player_number_card < 5 && Pourcentage == 100 /*ù&& Players[current_player].player_cards.Any(card => card.color == card_color.MULTICOLORE)*/)
             {
-                
+                Console.WriteLine("AI Special card");
+                //Console.ReadLine();
             }
             else
             {
@@ -1124,8 +1155,8 @@ namespace UNO
                     }
                     Cards_color_numbers[i, 0] = (byte)Card_color; // ajouter la couleur
                     Cards_color_numbers[i, 1] = current_type_card; // ajouter le nombre de carte par couleur
-                    Card_color++;
-                    current_type_card = 0;
+                    Card_color++; // passer à la couleur suivante
+                    current_type_card = 0; // remettre à 0 le nombre de carte 
                 }
 
                 // Prendre la/les couleur(s) qui est/sont qui revient/reviennent le plus souvent
@@ -1146,6 +1177,7 @@ namespace UNO
                     }
                 }
 
+                // Si l'IA peut jouer plus d'une carte, predire toutes les cartes jouables et prendre celle avec le plus de possibilité
                 if (Max_color.Count >= 1)
                 {
                     for (byte i = 0; i < Players[current_player].player_cards.Count; i++)
@@ -1160,10 +1192,10 @@ namespace UNO
                             }
                         }
                     }
-                    card_deck_used.Add(Players[current_player].player_cards.ElementAt(index_card));
-                    Players[current_player].player_cards.RemoveAt(index_card);
-                    
+                    card_deck_used.Add(Players[current_player].player_cards.ElementAt(index_card)); // ajouter la carte que l'IA va jouer au deck des cartes jouées
+                    Players[current_player].player_cards.RemoveAt(index_card); // retirer la carte du deck du joueur                 
                 }
+                // Regarder si l'IA possède une carte MULTICOLORE
                 else if (Players[current_player].player_cards.Any(card => card.color == card_color.MULTICOLORE))
                 {
                     index_card = (byte)Players[current_player].player_cards.FindIndex(card => card.color == card_color.MULTICOLORE);
@@ -1173,7 +1205,7 @@ namespace UNO
                 // piocher une carte
                 else
                 {
-                   Draw_card(Players, card_deck, players_numbers, card_deck_used, direction, current_player,ref Players_actions);
+                   Draw_card(Players, card_deck, card_deck_used, current_player ,ref Players_actions, Players[current_player].player_cards.Last());
                    Drew_card = Players[current_player].player_cards.Last();
                     // jouer la carte si elle peut etre jouée
                     if (play_drew_card(Drew_card, card_deck_used, current_color, Players[current_player].player_type))
@@ -1186,25 +1218,23 @@ namespace UNO
             
         }
 
-        static byte AI_card_prediction(byte value, Player[] Players, byte current_player, int[] index_playable_cards_to_test)
+        // Prediction d'une carte
+        static byte AI_card_prediction(byte value, Player[] Players, byte current_player, int[] index_playable_predictions_cards)
         {
-            List<Card> Card_to_test = new List<Card>();
+            List<Card> Prediction_card = new List<Card>();
 
-            byte numbers_cards = 0;
-            
-            Card_to_test.Add(Players[current_player].player_cards.ElementAt(value));
-            Can_play(current_player, Players, Card_to_test, ref index_playable_cards_to_test, Card_to_test.First().color);
-            Card_to_test.Clear();
-            for(byte i = 0; index_playable_cards_to_test[i] != -1; i++)
+            byte numbers_cards = 0; // nombre de carte pouvant être jouée après la prédiction
+
+            // Tester la carte et récuperer le nombre de possibilité de rejouabilité
+            Prediction_card.Add(Players[current_player].player_cards.ElementAt(value));
+            Can_play(current_player, Players, Prediction_card, ref index_playable_predictions_cards, Prediction_card.First().color);
+            Prediction_card.Clear();
+            for(byte i = 0; index_playable_predictions_cards[i] != -1; i++)
             {
                 numbers_cards++;
             }
-            return numbers_cards;
-
-            
+            return numbers_cards;         
         }
-
     }
-
 }
 
