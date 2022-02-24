@@ -205,13 +205,13 @@ namespace UNO
             }
 
 
-            //Loading("Génération des cartes en cours");
+            Loading("Génération des cartes en cours");
             // Ajouter les cartes du Uno dans le deck
             add_cards(ref deck_card);
-            //Loading("Mélange des cartes en cours");
+            Loading("Mélange des cartes en cours");
             // Melanger les cartes 
             shuffle_cards(ref deck_card);
-            //Loading("Distribution des cartes en cours");
+            Loading("Distribution des cartes en cours");
             // Distribuer les cartes aux joueurs
             deal_cards(ref Players, players_numbers, ref deck_card);
             // Ajouter la première carte au deck de cartes jouées
@@ -423,6 +423,7 @@ namespace UNO
             {
                 
                 Play_card(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Players_actions);// jouer la carte que le joueur a choisis
+               
             }
             else
             {
@@ -500,6 +501,7 @@ namespace UNO
             string player_points = "";
             Array.Sort(Players, delegate(Player point_x, Player point_y) { return point_x.player_points.CompareTo(point_y.player_points); });
 
+
             Console.WriteLine("         Voici vos points\n\r");
             for(int i = 0; i < players_numbers; i++)
             {
@@ -574,7 +576,7 @@ namespace UNO
                             {
                                 Console.WriteLine("Choisissez une couleur de carte à jouer ");
                                 card_choice_color = Console.ReadLine().ToUpper();
-                            } while (byte.TryParse(card_choice_color, out byte int_value) || (!Enum.TryParse(card_choice_color, out card_color card_color)));
+                            } while (byte.TryParse(card_choice_color, out byte int__) || (!Enum.TryParse(card_choice_color, out card_color card_color)));
 
                             if (card_choice_type == "BASIC")
                             {
@@ -823,8 +825,6 @@ namespace UNO
                     break;
 
             }
-
-            Console.WriteLine($"Changement de sens !");
         }
 
         // Changer la couleur du jeu
@@ -946,6 +946,8 @@ namespace UNO
                         }
                         Show_colored_message(Players[current_player].player_cards.Last().color, $"{card_value}\r\n");
                     }
+                    
+                    
                 }
                 int card_draw_number;
                 // Choisir le nombre de carte à récuperer depuis le deck du Uno
@@ -954,11 +956,13 @@ namespace UNO
                     case card_type.PLUS2:
                         draw(2);
                         card_draw_number = 2;
+                        System.Threading.Thread.Sleep(1000);
                         break;
 
                     case card_type.PLUS4:
                         draw(4);
                         card_draw_number = 4;
+                        System.Threading.Thread.Sleep(1000);
                         break;
 
                     default:
@@ -1069,7 +1073,7 @@ namespace UNO
             
             if (Players_actions[0].Player_index != -1)
             {
-                Console.WriteLine("                   last player actions ");
+                Console.WriteLine("                   Dernières actions des joueurs ");
                 for (int i = 1; i <= Last_action_index; i++)
                 {
                     string Message = Players_actions[i - 1].Player_action_text;
@@ -1133,10 +1137,12 @@ namespace UNO
             // Calculer le pourcentage de jouer une carte spéciale 
             Pourcentage = random.Next(Math.Max(Math.Min((Next_player_number_card - AI_number_cards) * -10, 100), 0), 100);
 
-            if (Next_player_number_card < 5 && Pourcentage == 100 /*ù&& Players[current_player].player_cards.Any(card => card.color == card_color.MULTICOLORE)*/)
+            if (Next_player_number_card < 5 && Pourcentage == 100 && Players[current_player].player_cards.Any(card => card.color == card_color.MULTICOLORE))
             {
-                Console.WriteLine("AI Special card");
-                //Console.ReadLine();
+
+                Card card_AI  = (Players[current_player].player_cards.Find(card => card.color == card_color.MULTICOLORE)); // trouver la carte que l'IA va jouer
+                card_deck_used.Add(card_AI); // ajouter la carte que l'IA va jouer au deck des cartes jouées
+                Players[current_player].player_cards.Find(card => card == card_AI); // retirer la carte du deck du joueur   
             }
             else
             {
@@ -1213,6 +1219,11 @@ namespace UNO
                         card_deck_used.Add(Drew_card);
                         Players[current_player].player_cards.Remove(Drew_card);
                     }
+                    else
+                    {
+                        current_player = Get_next_player(direction, current_player, players_numbers);
+                    }
+
                 }
             }
             
@@ -1233,8 +1244,9 @@ namespace UNO
             {
                 numbers_cards++;
             }
-            return numbers_cards;         
+            return numbers_cards;        
         }
+
     }
 }
 
