@@ -98,33 +98,49 @@ namespace UNO
         static void Main()
         {
 
+            string title = @"
+                                            ▒▒▒▒▒▒▒║
+                                       ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▄▄▄▄▄▄▄▄
+                                   ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▄██▀▀⌠▄▄▄╓└▀▀█▄,
+                                ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░▄█▀;▄▓▓▓▓╢╢▓▓▓▓▄└▀█
+                             ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▄█▀,▄▓╢▓▓▓▓▓▓▓▓▓▓╢▓▄└█▄
+                          ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░▄██▌▒░█▀ ▄▓▓▓▓▓▓╢▓▓▓▓╢▓▓▓▓╢▓┐▀█
+                        ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░▄██▀░▄ █▄█▀ ▐╣▓▓▓╢▓▀└    ▀▓╣▓▓▓▓▓▄▐▌
+                      ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒░█▀└▄▄▓▓╢▌▐█┘ ]▓▓▓▓╫▀         ╙▓▓▓▓▓▓▐▌
+                    ▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▄█   ▐ ▓▓▓▓   ▓▓▓▓╫▌            ▓▓▓▓▓▓ █
+                   ▒▒▒▒▒▒▒▒▒░▄▄███░▒▒▐█     ▓▓▓▓╢▌   ▓▓▓▓▓▓▐█▀▀██      ▐▓▓▓▓▌▐▌
+                 ▒▒▒▒▒▒▒▒░███▀░▄▄╙██▄▒█     ▐▓▓▓▓▓C j▓▓▓▓▓ █▒▒▒▒▒█▌     ▓▓▓▓▓▌▌
+                ▒▒▒▒▒░▄█▀▀.▄▓▓▓▓▓▄└▀███     ▓▓▓▓▓▓  ▌▓▓▓▓U▐▌▒▒▒▒▒█▌    ▐▓▓▓▓▓ █
+              ▒▒▒▒▄█▀▀└▄▄▓  ▓▓▓▓▓▓╢▓▄ ▀█      ▓▓▓▓╫▌ ▓▓▓▓╢▌└█▒▒▒▒▒▒█    ▐▓▓▓▓▓ ▌
+             ▒▒▒░█▀  █▓╢▓╢▌ ╙▓▓▓▓▓▓▓▓▓▓▄       ▐╣▓▓▓▓ ▐╣▓▓▓▓▄╙█▒▒▒▒▒█    ▓▓▓▓▓▌▐▌
+          ▄▄░▒▒▒█    ▐╣▓▓▓▓⌐ ▓╣▓▓▓▓▓▓▓▓╣▓▄     █▓▓▓╢▌ █▓▓▓▓▓▄╙█▄▒▒▒█   ▓╢▓▓▓▓█
+      ▄█▀▀ ▐▌▒▒▓▌     █▓▓▓▓▓  █▓▓▓▓█▓▓▓▓▓╣▓▓▄  ▐▓▓▓▓▓U└█▓▓▓▓╢▓▄╙▀▀▀ ▄▓╢▓▓▓╫▌▌
+   █▀▀ ▄▄▓█ █▒▒▒█      ▌▓▓▓╫▌ ▐╣▓▓▓▓▓▀▓╢▓▓▓▓▓▓▄ █╣▓▓▓█ █╢▓▓▓▓▒▓▓▓▓▓▒╢▓▓▓▓╫▀█
+ ▄█   █╢▓▓╢▌└█▒▒▐█     █╣▓▓▓▓  █▓▓▓▓█  ▀█▓▓▓▓▓╢▓█▌▓▓▓╫▌  ▀▓▓▓▓▓▓▓▓▓▓▓▓▓▓╢█▀█
+█▀    ▐╣▓▓▓▓⌐▀▌▒▒█▌     █▓▓▓╢▌ ▐▓▓▓▓╫▌   ╙▓▓▓▓▓▓▓╣▓▓▓▓▓   '▀█▒▓▓▓▓▓▓▓╢▒█▀ █
+▐▌     █▓▓▓▓█ █▒▒░█     ▐╣▓▓▓▓⌐ █╣▓▓▓█      ▀▓╢▓▓▓▓▓▓▓╢▌     └▀▀███▀▀▀   ▄▀
+ █     ▐▓▓▓▓╫▄▐█▒▒▓▌     ▓▓▓▓▓█  ▌▓▓▓╢▌       ▀▓╣▓▓▓▓▓▓▓U              ▄█▀
+  █     ▓╣▓▓▓▓ █▒▒▒█      ▓▓▓▓   ▐╣▓▓▓▓         ╙▀▓▓▓▓▓▓█           ▄▄█▀
+  ▓▌     ▓▓▓▓╢▌└█▒▒╠█     ▓▓▓▓▓▓  █▓▓▓▓▓ ▄         ▀▓▓▓▀▀ ▐█▄▄▄▄▄███▀
+   █     ▐╣▓▓▓▓⌐▐▌▒▒█▌    ]▓▓▓▓▓  ╙▓▓▓▓▓ ▐██╓            ▄█▒▒▒▒▒▒▒
+   ▐▌     ▓▓▓▓╣▓ █▒▒▒█    ]▓▓▓▓▓   ▓╣▓▓▓▓ █▒▀█▄        ▄█▒▒▒▒▒▒▒▒
+    █     ╙▓▓▓▓╫▌╙█▒▒█▌   ▓╢▓▓▓▓    ▓▓▓▓   █▒▒▀█▄,,▄▄██▀▒▒▒▒▒▒▒▒
+     █     ▓╣▓▓▓╢▄'▀▀█▀ ,▓╣▓▓▓▓▓    ▐▓▓▀▀  █▒▒▒▒▒▀▀▀▒▒▒▒▒▒▒▒▒▒
+     █▌     ▓╢▓▓▓╢▓▓▄▄@▓╢▓▓▓▓▓▓          ▄█▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+      █      ▓╣▓▓▓▓▓▓▓▓▓▓▓▓▓╫▓ █C      ▄█▀▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+      ▐█      ▀▓╢▓▓▓▓▓▓▓▓╢▓▀└╓█▀█  ▄██▀▀▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+       ▀█       ▀▀▓▓▓▓▓▓▀╙  ▄█▒▒▀█▀▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+        ▀█                ▄█▀▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+          █▄            ▄█▀▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+            ▀█▄▄▄ ▄▄▄██▀▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+                ▀▀▀▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒▒
+                   ▒▒▒▒▒▒▒▒▒▒▒▒▒▒ ";
+
+
 
             string texte = "";
             Console.Title = "UNO";
             // Logo du Uno
-            string title = @"
-                                     #########################(    
-                               ##########################  @@,  ***   @@  
-                           ###########################  @ *************** @  
-                       ####################   #@@@ / @@ *****, @@@@@ ****** @ 
-                    #################### @@@*****/ @@@ **** @@@@@@@@##@ *****@ 
-                  ############     ### @@@@@@*****@@@ **** @ ###  @####@ **** @ 
-               ########   @@@  *** @    @@@@@@*****@@ **** @ ###### @@##@*****@ 
-             #####  @@  ** @@,*******  @ @@@@@&*****@@*****./ ###### @@@@*****@ 
-             ### #@@@@ **** @@*********** @@@@@ *****@ ***** @  #### @@@***** @ 
-       @@@  @  ##  @@@@@ **** @@*****  ******* @@ ****,@@ ****** &@@@  ****** @ 
-   @@@.*****@ ,##  @&@@@ **** @@*****@@@@ ******* **** @@@ *************** @ 
-  @@@@@ *****@ ###  @@@@@***** @@*****@@@@@@ ,********* @@@@@@   ***   @@@  
-   @@@@@ *****@ ### /@@@@@***** @ *****@@@@@@@@@ ******* @@@@@@@@@@@@@@  
-    @@@@@ **** @ ### @@@@@@*****@@ *****@ @@@@@@@@@@ *  @@@          
-     @@@@@ **** @ ### @@@@@ **** @@ *****@ #  @@@@@@@@@@  ########
-      @@@@@ *****@@ ## @@@ *****@@@@ **** @ ####  @   ##########
-       @@@@@ ******.   .*******@@@@@@@@@@@ ###################
-        @@@@@@ ************* @   @@@@    ##################
-         @@@@@@@@@     &@@@@  ### ######################
-          @@@@@@@@@@@@@  #########################
-                     /########################                         
-                                                                 |";
 
             // Afficher le logo du Uno
             int Title_index = 0;
@@ -139,13 +155,13 @@ namespace UNO
 
                 switch (title.ElementAt(Title_index - 1).ToString())
                 {
-                    case "#":
+                    case "▒": case "║": case "╜": 
                         Show_colored_message(card_color.ROUGE, texte);
                         break;
-                    case "@":
+                    case " ":
                         Console.Write(texte);
                         break;
-                    case "*":
+                    case "▓":
                         Show_colored_message(card_color.JAUNE, texte);
                         break;
 
@@ -205,13 +221,13 @@ namespace UNO
             }
 
 
-            Loading("Génération des cartes en cours");
+            //Loading("Génération des cartes en cours");
             // Ajouter les cartes du Uno dans le deck
             add_cards(ref deck_card);
-            Loading("Mélange des cartes en cours");
+            //Loading("Mélange des cartes en cours");
             // Melanger les cartes 
             shuffle_cards(ref deck_card);
-            Loading("Distribution des cartes en cours");
+            //Loading("Distribution des cartes en cours");
             // Distribuer les cartes aux joueurs
             deal_cards(ref Players, players_numbers, ref deck_card);
             // Ajouter la première carte au deck de cartes jouées
@@ -225,7 +241,7 @@ namespace UNO
                 Random_color(ref current_color);
             }
             // Effacer la derniere carte jouée
-            Start_line = 20;
+            Start_line = 36;
             End_line = Console.CursorTop; ;
             for (int i = 0; i < End_line - Start_line; i++)
             {
@@ -407,6 +423,13 @@ namespace UNO
         // Commencer une manche
         static void play_round(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck,ref int Start_line, ref int End_line, ref Player_action[] Players_actions, int longest_length)
         {
+            Console.WriteLine("\n\n\n\n\n\n\n\n");
+
+            test(players_numbers, Players);
+
+            Console.ReadLine();
+
+
             Start_line = Console.CursorTop;
             Console.WriteLine($"\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r {Players[current_player].player_name}, c'est à vous de jouez ! \n\r\n\r");
             Show_players_actions(Players_actions, Players);// afficher les dernières actions des joueurs
@@ -468,6 +491,93 @@ namespace UNO
 
             play_round(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Start_line, ref End_line, ref Players_actions, longest_length);
         }
+
+        static void test(byte players_numbers, Player[] Players)
+        {
+            string test = null;
+
+            int max_horizontale_lenght = 0;
+            int total_horizontale_lenght = 0;
+
+
+            if (players_numbers == 4)
+            {
+                max_horizontale_lenght = Math.Max(Math.Max(Players[3].player_name.Length, Players[1].player_name.Length), 8);
+            }
+            Console.WriteLine(max_horizontale_lenght);
+
+
+
+
+            // turning arrow
+            Console.WriteLine(@"        
+                          ▄▄
+                      ▄▄▄████▄
+                   ▄██████████
+                  ████▀   █▀
+                 ███▀
+                ▐███
+ ");
+
+            test = string.Format(@"
+                                {0, " + max_horizontale_lenght + "}" + Players[0].player_name + @"
+                                {1, " + max_horizontale_lenght + "}" + Players[0].player_cards.Count() + @" carte(s)", " ", " ");
+            
+            if(players_numbers == 2)
+            {
+                test = test + @"
+
+
+                                " + Players[1].player_name + @"
+                                " + Players[1].player_cards.Count() + @" carte(s)";
+            }
+            else
+            {
+                if(players_numbers == 4)
+                {
+                    test = test + string.Format(@"
+
+
+    {0, " + max_horizontale_lenght + "}" + Players[1].player_name + @"                                                         " + Players[3].player_name + @"
+    " + Players[1].player_cards.Count() + @" carte(s)                    {0, " + max_horizontale_lenght + "}                             " + Players[3].player_cards.Count() + @" carte(s)", " ") ;
+                }
+                else
+                {
+                    test = test + @"
+
+
+    " + Players[1].player_name + @"
+    " + Players[1].player_cards.Count() + @" carte(s)";
+                }
+                test = test + String.Format(@"
+
+
+                                {0, " + max_horizontale_lenght + "}" + Players[2].player_name + @"
+                                {1, " + max_horizontale_lenght + "}" + Players[2].player_cards.Count() + @" carte(s)", " ", " ");
+
+
+            }
+
+            
+
+
+            Console.WriteLine(test);
+
+
+
+            // reverse turning arrow
+            Console.WriteLine(@"               
+                                   ▄▄▄▄
+                                   ███▌
+                            ▄    ▄███▀
+                         ,▄██▄▄█████▀
+                         ████████▀
+                           ██");
+                
+        }
+
+
+
 
         static void Get_players_points(Player[] Players, byte players_numbers)
         {
@@ -568,7 +678,7 @@ namespace UNO
                             Console.WriteLine("Choisissez un type de carte à jouer ou piochez une carte ");
                             card_choice_type = Console.ReadLine().ToUpper();
 
-                        } while (byte.TryParse(card_choice_type, out byte int_value) || (!Enum.TryParse(card_choice_type, out card_type card_type) && (card_choice_type != "PIOCHER")));
+                        } while (byte.TryParse(card_choice_type, out byte _) || (!Enum.TryParse(card_choice_type, out card_type _) && (card_choice_type != "PIOCHER")));
 
                         if (card_choice_type != "PIOCHER")
                         {
@@ -576,7 +686,7 @@ namespace UNO
                             {
                                 Console.WriteLine("Choisissez une couleur de carte à jouer ");
                                 card_choice_color = Console.ReadLine().ToUpper();
-                            } while (byte.TryParse(card_choice_color, out byte int__) || (!Enum.TryParse(card_choice_color, out card_color card_color)));
+                            } while (byte.TryParse(card_choice_color, out byte _) || (!Enum.TryParse(card_choice_color, out card_color _)));
 
                             if (card_choice_type == "BASIC")
                             {
@@ -585,7 +695,7 @@ namespace UNO
                                     Console.WriteLine("Choisissez le numéro de la carte à jouer ");
                                     card_choice_number = Console.ReadLine();
 
-                                } while (!byte.TryParse(card_choice_number, out byte card_number));
+                                } while (!byte.TryParse(card_choice_number, out byte _));
                             }
                         }
 
@@ -620,7 +730,6 @@ namespace UNO
                     }
                     break;
             }
-            Console.WriteLine(return_value);
             return return_value;
         }
 
@@ -632,8 +741,6 @@ namespace UNO
 
             if (card_choice_type != "PIOCHER")
             {
-
-
                 if (card_choice_type == "BASIC")
                 {
                     Card = Players[current_player].player_cards.Find(card => card.types == (card_type)Enum.Parse(typeof(card_type), card_choice_type) && card.color == (card_color)Enum.Parse(typeof(card_color), card_choice_color) && card.number == int.Parse(card_choice_number));
@@ -945,9 +1052,7 @@ namespace UNO
                             card_value = card_value + " / " + Players[current_player].player_cards.Last().number;
                         }
                         Show_colored_message(Players[current_player].player_cards.Last().color, $"{card_value}\r\n");
-                    }
-                    
-                    
+                    }                
                 }
                 int card_draw_number;
                 // Choisir le nombre de carte à récuperer depuis le deck du Uno
@@ -956,13 +1061,20 @@ namespace UNO
                     case card_type.PLUS2:
                         draw(2);
                         card_draw_number = 2;
-                        System.Threading.Thread.Sleep(1000);
+                        if(Players[current_player].player_type == player_type.JOUEUR)
+                        {
+                            System.Threading.Thread.Sleep(1000);
+                        }
+                        
                         break;
 
                     case card_type.PLUS4:
                         draw(4);
                         card_draw_number = 4;
-                        System.Threading.Thread.Sleep(1000);
+                        if (Players[current_player].player_type == player_type.JOUEUR)
+                        {
+                            System.Threading.Thread.Sleep(1000);
+                        }
                         break;
 
                     default:
@@ -1073,7 +1185,7 @@ namespace UNO
             
             if (Players_actions[0].Player_index != -1)
             {
-                Console.WriteLine("                   Dernières actions des joueurs ");
+                Console.WriteLine("                   Dernières actions des joueurs \n");
                 for (int i = 1; i <= Last_action_index; i++)
                 {
                     string Message = Players_actions[i - 1].Player_action_text;
@@ -1082,7 +1194,7 @@ namespace UNO
                     Message = Message.Replace("£" + Color_message + "£", "");
                     Message = Message.Replace("&" + String_color + "&", "");
                     Message = Message.Replace("#player_name#", Players[Players_actions[i - 1].Player_index].player_name);
-                    Console.Write($"                {Message}");
+                    Console.Write($"                    {Message}");
                     if (Color_message != " ")
                     {
                         card_color Color = (card_color)Enum.Parse(typeof(card_color), String_color);
