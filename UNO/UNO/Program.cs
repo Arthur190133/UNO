@@ -425,16 +425,11 @@ namespace UNO
         {
             Console.WriteLine("\n\n\n\n\n\n\n\n");
 
-            test(players_numbers, Players);
-
-            Console.ReadLine();
-
-
             Start_line = Console.CursorTop;
-            Console.WriteLine($"\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r {Players[current_player].player_name}, c'est à vous de jouez ! \n\r\n\r");
+            Show_board_game(players_numbers, Players);
+            Console.WriteLine($" {Players[current_player].player_name}, c'est à vous de jouez ! \n\r\n\r");
             Show_players_actions(Players_actions, Players);// afficher les dernières actions des joueurs
             Show_last_card_played(card_deck_used.Last(), current_color);// afficher la dernière carte jouée
-            show_number_of_cards_of_each_player(Players, players_numbers, longest_length);// afficher le nombre de carte de chaque joueur
             Sort_cards(ref Players, players_numbers, current_player);// trier les cartes du joueur
             Can_play(current_player, Players, card_deck_used, ref index_playable_card, current_color);// récuperer les cartes jouable du joueur
             if (Players[current_player].player_type == player_type.JOUEUR)
@@ -492,68 +487,55 @@ namespace UNO
             play_round(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Start_line, ref End_line, ref Players_actions, longest_length);
         }
 
-        static void test(byte players_numbers, Player[] Players)
+        static void Show_board_game(byte players_numbers, Player[] Players)
         {
-            string test = null;
-
-            int max_horizontale_lenght = 0;
-            int total_horizontale_lenght = 0;
-
-
-            if (players_numbers == 4)
-            {
-                max_horizontale_lenght = Math.Max(Math.Max(Players[3].player_name.Length, Players[1].player_name.Length), 8);
-            }
-            Console.WriteLine(max_horizontale_lenght);
-
-
-
+            string Board_game = null;
 
             // turning arrow
             Console.WriteLine(@"        
-                          ▄▄
-                      ▄▄▄████▄
-                   ▄██████████
-                  ████▀   █▀
-                 ███▀
-                ▐███
+          ▄▄               
+      ▄▄▄████▄                
+   ▄██████████                
+  ████▀   █▀               
+ ███▀                
+▐███                
  ");
 
-            test = string.Format(@"
-                                {0, " + max_horizontale_lenght + "}" + Players[0].player_name + @"
-                                {1, " + max_horizontale_lenght + "}" + Players[0].player_cards.Count() + @" carte(s)", " ", " ");
+            Board_game = string.Format(@"
+{0, 25}" + Players[0].player_name + @"
+{0, 25}" + Players[0].player_cards.Count() + @" carte(s)", " ");
             
             if(players_numbers == 2)
             {
-                test = test + @"
+                Board_game = Board_game + string.Format( @"
 
 
-                                " + Players[1].player_name + @"
-                                " + Players[1].player_cards.Count() + @" carte(s)";
+{0, 25}" + Players[1].player_name + @"
+{0, 25}" + Players[1].player_cards.Count() + @" carte(s)", " " );
             }
             else
             {
                 if(players_numbers == 4)
                 {
-                    test = test + string.Format(@"
+                    Board_game = Board_game + string.Format(@"
 
 
-    {0, " + max_horizontale_lenght + "}" + Players[1].player_name + @"                                                         " + Players[3].player_name + @"
-    " + Players[1].player_cards.Count() + @" carte(s)                    {0, " + max_horizontale_lenght + "}                             " + Players[3].player_cards.Count() + @" carte(s)", " ") ;
+    " + Players[1].player_name + @"{0,45 }" + Players[3].player_name + @"
+    " + Players[1].player_cards.Count() + @" carte(s){0, 36}" + Players[3].player_cards.Count() + @" carte(s)", " ") ;
                 }
                 else
                 {
-                    test = test + @"
+                    Board_game = Board_game + @"
 
 
     " + Players[1].player_name + @"
     " + Players[1].player_cards.Count() + @" carte(s)";
                 }
-                test = test + String.Format(@"
+                Board_game = Board_game + string.Format(@"
 
 
-                                {0, " + max_horizontale_lenght + "}" + Players[2].player_name + @"
-                                {1, " + max_horizontale_lenght + "}" + Players[2].player_cards.Count() + @" carte(s)", " ", " ");
+{0, 25}" + Players[2].player_name + @"
+{0, 25}" + Players[2].player_cards.Count() + @" carte(s)", " ");
 
 
             }
@@ -561,18 +543,18 @@ namespace UNO
             
 
 
-            Console.WriteLine(test);
-
+            Console.WriteLine(Board_game);
+            //   
 
 
             // reverse turning arrow
-            Console.WriteLine(@"               
-                                   ▄▄▄▄
-                                   ███▌
-                            ▄    ▄███▀
-                         ,▄██▄▄█████▀
-                         ████████▀
-                           ██");
+            Console.WriteLine(string.Format(@"               
+    {0, 52}         ▄▄▄▄
+    {0, 52}        ███▌
+    {0, 52}   ▄    ▄███▀
+    {0, 52},▄██▄▄█████▀
+    {0, 52}████████▀
+    {0, 52} ██", " " ));
                 
         }
 
@@ -633,21 +615,7 @@ namespace UNO
             Show_colored_message(current_color, $"{card} \n\r\n\r\n\r");
 
         }
-        static void show_number_of_cards_of_each_player(Player[] Players, byte players_numbers, int longest_length)
-        {
-            string Player_info;
-            Console.WriteLine("Voici le nombre de carte de chaque joueur\n\r");
-
-
-            for (byte i = 0; i < players_numbers; i++)
-            {
-                Player_info = String.Format("                   {0," + longest_length + "} | {1,2}", Players[i].player_name, Players[i].player_cards.Count());
-                Console.WriteLine(Player_info);
-            }
-        }
-
-
-
+       
         static bool Choose_card(byte current_player, ref Player[] Players, List<Card> card_deck_used, int[] index_playable_card, ref List<Card> card_deck, byte players_numbers, card_color current_color, Direction direction, ref Player_action[] Players_actions)
         {
             var random = new Random();// variable random
