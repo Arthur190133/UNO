@@ -423,8 +423,6 @@ namespace UNO
         // Commencer une manche
         static void play_round(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck,ref int Start_line, ref int End_line, ref Player_action[] Players_actions, int longest_length)
         {
-            Console.WriteLine("\n\n\n\n\n\n\n\n");
-
             Start_line = Console.CursorTop;
             Show_board_game(players_numbers, Players);
             Console.WriteLine($" {Players[current_player].player_name}, c'est à vous de jouez ! \n\r\n\r");
