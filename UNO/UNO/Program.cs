@@ -1,38 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using static UNO.Program;
+using static UNO.Player;
+using static UNO.Card;
 
 namespace UNO
 {
-    // classe du joueur
-    public class Player
-    {
-
-        public player_type player_type{ get; set; }// type de joueur
-        public string player_name { get; set; }// nom du joueur
-        public List<Card> player_cards { get; set; }// liste des cartes du joueur
-        public int player_points { get; set; }// points du joueur
-
-        // initialiser les variables du joueur
-        public Player(player_type current_player_type, string current_player_name)
-        {
-            player_type = current_player_type;
-            player_name = current_player_name;
-            player_cards = new List<Card>();
-            player_points = int.MaxValue;
-        }
-    }
-
-    // classe de la carte
-    public class Card
-    {
-        public card_type types { get; set; }// type de la carte
-        public card_color color { get; set; }// couleur de la carte
-        public int number { get; set; }// numéro de la carte
-    }
-
-
+    // Classe du programme principale
     public class Program
     {
 
@@ -221,7 +195,7 @@ namespace UNO
             }
 
 
-            //Loading("Génération des cartes en cours");
+           // Loading("Génération des cartes en cours");
             // Ajouter les cartes du Uno dans le deck
             add_cards(ref deck_card);
             //Loading("Mélange des cartes en cours");
@@ -249,7 +223,7 @@ namespace UNO
                 Console.Write(new string(' ', Console.WindowWidth));
                 Console.SetCursorPosition(Console.CursorLeft, Start_line);
             }
-            play_round(players_numbers, Current_direction, ref current_player, ref Players, deck_card_used, ref index_playable_card, ref current_color, ref deck_card, ref Start_line, ref End_line, ref  Players_actions, longest_length);
+            play_round(players_numbers,ref Current_direction, ref current_player, ref Players, deck_card_used, ref index_playable_card, ref current_color, ref deck_card, ref Start_line, ref End_line, ref  Players_actions, longest_length);
 
             Console.Read();
 
@@ -421,10 +395,10 @@ namespace UNO
         }
 
         // Commencer une manche
-        static void play_round(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck,ref int Start_line, ref int End_line, ref Player_action[] Players_actions, int longest_length)
+        static void play_round(byte players_numbers,ref Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck,ref int Start_line, ref int End_line, ref Player_action[] Players_actions, int longest_length)
         {
             Start_line = Console.CursorTop;
-            Show_board_game(players_numbers, Players);
+            Show_board_game(players_numbers, Players, direction);
             Console.WriteLine($" {Players[current_player].player_name}, c'est à vous de jouez ! \n\r\n\r");
             Show_players_actions(Players_actions, Players);// afficher les dernières actions des joueurs
             Show_last_card_played(card_deck_used.Last(), current_color);// afficher la dernière carte jouée
@@ -438,7 +412,7 @@ namespace UNO
             if(Choose_card(current_player, ref Players, card_deck_used, index_playable_card, ref card_deck, players_numbers, current_color, direction, ref Players_actions))// choisir une carte à jouer
             {
                 
-                Play_card(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Players_actions);// jouer la carte que le joueur a choisis
+                Play_card(players_numbers,ref direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Players_actions);// jouer la carte que le joueur a choisis
                
             }
             else
@@ -482,22 +456,44 @@ namespace UNO
 
 
 
-            play_round(players_numbers, direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Start_line, ref End_line, ref Players_actions, longest_length);
+            play_round(players_numbers,ref direction, ref current_player, ref Players, card_deck_used, ref index_playable_card, ref current_color, ref card_deck, ref Start_line, ref End_line, ref Players_actions, longest_length);
         }
 
-        static void Show_board_game(byte players_numbers, Player[] Players)
+        static void Show_board_game(byte players_numbers, Player[] Players, Direction direction)
         {
-            string Board_game = null;
+            string Board_game;
 
             // turning arrow
-            Console.WriteLine(@"        
-          ▄▄               
-      ▄▄▄████▄                
-   ▄██████████                
-  ████▀   █▀               
- ███▀                
-▐███                
+
+            
+
+            switch(direction)
+            {
+               case Direction.Droite:
+                    Console.WriteLine(@"        
+              ▄▄
+          ▄▄▄████▄
+       ▄█████████▀
+      ████▀   █▀
+     ████
+    ▐███               
  ");
+                    break;
+
+                case Direction.Gauche:
+                    Console.WriteLine(@"
+         ▄▄▄██
+      ▄███████
+     ████▀
+    ███▀
+   ████
+ ▀██████▀
+   ▀██▀
+");
+                    break;
+            
+            }
+            
 
             Board_game = string.Format(@"
 {0, 25}" + Players[0].player_name + @"
@@ -545,14 +541,33 @@ namespace UNO
             //   
 
 
-            // reverse turning arrow
-            Console.WriteLine(string.Format(@"               
+            switch (direction)
+            {
+                case Direction.Droite:
+                    Console.WriteLine(string.Format(@"               
     {0, 52}         ▄▄▄▄
-    {0, 52}        ███▌
+    {0, 52}         ███▌
     {0, 52}   ▄    ▄███▀
-    {0, 52},▄██▄▄█████▀
+    {0, 52} ▄██▄▄█████▀
     {0, 52}████████▀
-    {0, 52} ██", " " ));
+    {0, 52}'██", " "));
+                    break;
+
+                case Direction.Gauche:
+                    Console.WriteLine(string.Format(@"               
+    {0, 52}          ▄█
+    {0, 52}       ▄█████▄
+    {0, 52}        ████▀ 
+    {0, 52}        ███▌
+    {0, 52}      ▄████
+    {0, 52} ▄▄██████▀
+    {0, 52} ████▀▀`", " "));
+                    break;
+            }
+
+
+            // reverse turning arrow
+ 
                 
         }
 
@@ -738,7 +753,7 @@ namespace UNO
             return false;
         }
 
-        static void Play_card(byte players_numbers, Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck, ref Player_action[] Players_actions)
+        static void Play_card(byte players_numbers,ref Direction direction, ref byte current_player, ref Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, ref card_color current_color, ref List<Card> card_deck, ref Player_action[] Players_actions)
         {
 
 
