@@ -36,3 +36,11 @@ C:\Users\ryckb\Documents\UNO - Copie\UNO\UNO\obj\Debug\UNO.csproj.SuggestedBindi
 C:\Users\ryckb\Documents\UNO - Copie\UNO\UNO\obj\Debug\UNO.csproj.CoreCompileInputs.cache
 C:\Users\ryckb\Documents\UNO - Copie\UNO\UNO\obj\Debug\UNO.exe
 C:\Users\ryckb\Documents\UNO - Copie\UNO\UNO\obj\Debug\UNO.pdb
+C:\Users\ryckb\Documents\last\UNO\UNO\UNO\bin\Debug\UNO.exe.config
+C:\Users\ryckb\Documents\last\UNO\UNO\UNO\bin\Debug\UNO.exe
+C:\Users\ryckb\Documents\last\UNO\UNO\UNO\bin\Debug\UNO.pdb
+C:\Users\ryckb\Documents\last\UNO\UNO\UNO\obj\Debug\UNO.csproj.AssemblyReference.cache
+C:\Users\ryckb\Documents\last\UNO\UNO\UNO\obj\Debug\UNO.csproj.SuggestedBindingRedirects.cache
+C:\Users\ryckb\Documents\last\UNO\UNO\UNO\obj\Debug\UNO.csproj.CoreCompileInputs.cache
+C:\Users\ryckb\Documents\last\UNO\UNO\UNO\obj\Debug\UNO.exe
+C:\Users\ryckb\Documents\last\UNO\UNO\UNO\obj\Debug\UNO.pdb
