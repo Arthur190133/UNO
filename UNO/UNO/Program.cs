@@ -303,7 +303,7 @@ namespace UNO
         }
 
         // créer les joueurs
-        public static void create_players(string[] players_names, player_type[] players_types, List<Card> card_deck, Player[] players)
+        static void create_players(string[] players_names, player_type[] players_types, List<Card> card_deck, Player[] players)
         {
             for (byte i = 0; i < 4; i++)
             {
@@ -312,7 +312,7 @@ namespace UNO
         }
 
         // ajout de toutes les cartes dans le deck
-        public static void add_cards(ref List<Card> card_deck)
+        static void add_cards(ref List<Card> card_deck)
         {
             card_color color = card_color.BLEU;// couleur de carte
 
@@ -840,7 +840,7 @@ namespace UNO
             }
         }
 
-        public static bool Can_play(byte player, Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, card_color current_color)
+        static bool Can_play(byte player, Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, card_color current_color)
         {
             int index_card = 0;
             // mettre -1 comme valeur par defaut pour index_playable_card
@@ -1198,7 +1198,6 @@ namespace UNO
                 int Start_index = Message.IndexOf(Start, 0) + Start.Length;
                 int End_index = Message.IndexOf(Start, Start_index);
                 result = Message.Substring(Start_index, End_index - Start_index);
-                return result;
             }
             return result;
         }
