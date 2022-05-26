@@ -2,36 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using static UNO.Program;
+using static UNO.Card;
+using static UNO.Player;
 
 namespace UNO
 {
-    // classe du joueur
-    public class Player
-    {
-
-        public player_type player_type{ get; set; }// type de joueur
-        public string player_name { get; set; }// nom du joueur
-        public List<Card> player_cards { get; set; }// liste des cartes du joueur
-        public int player_points { get; set; }// points du joueur
-
-        // initialiser les variables du joueur
-        public Player(player_type current_player_type, string current_player_name)
-        {
-            player_type = current_player_type;
-            player_name = current_player_name;
-            player_cards = new List<Card>();
-            player_points = int.MaxValue;
-        }
-    }
-
-    // classe de la carte
-    public class Card
-    {
-        public card_type types { get; set; }// type de la carte
-        public card_color color { get; set; }// couleur de la carte
-        public int number { get; set; }// numéro de la carte
-    }
-
 
     public class Program
     {
@@ -313,7 +288,7 @@ namespace UNO
         }
 
         // créer les joueurs
-        public static void create_players(string[] players_names, player_type[] players_types, List<Card> card_deck, Player[] players)
+        static void create_players(string[] players_names, player_type[] players_types, List<Card> card_deck, Player[] players)
         {
             for (byte i = 0; i < 4; i++)
             {
@@ -322,7 +297,7 @@ namespace UNO
         }
 
         // ajout de toutes les cartes dans le deck
-        public static void add_cards(ref List<Card> card_deck)
+         static void add_cards(ref List<Card> card_deck)
         {
             card_color color = card_color.BLEU;// couleur de carte
 
@@ -749,7 +724,7 @@ namespace UNO
             }
         }
 
-        public static bool Can_play(byte player, Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, card_color current_color)
+        static bool Can_play(byte player, Player[] Players, List<Card> card_deck_used, ref int[] index_playable_card, card_color current_color)
         {
             int index_card = 0;
             // mettre -1 comme valeur par defaut pour index_playable_card
